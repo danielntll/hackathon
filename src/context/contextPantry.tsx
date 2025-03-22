@@ -20,6 +20,19 @@ type typeContextPantry = {
     expirationDate: string
   ) => Promise<void>;
   getLastPriceByProductID: (productID: string) => Promise<number>;
+  addPantryProductPriceRecord: (
+    productID: string,
+    price: number,
+    date: string,
+    supermarket?: string
+  ) => Promise<void>;
+  addPantryProduct: (
+    productID: string,
+    itemCount: number,
+    quantity: number | undefined,
+    unit: string,
+    pricePerItem: number | undefined
+  ) => Promise<void>;
 };
 
 const ContextPantry = createContext<typeContextPantry>({
@@ -30,6 +43,8 @@ const ContextPantry = createContext<typeContextPantry>({
   getPantryProductByUID: () => Promise.resolve(undefined),
   updatePantryProductExpirationDate: () => Promise.resolve(),
   getLastPriceByProductID: () => Promise.resolve(0),
+  addPantryProductPriceRecord: () => Promise.resolve(),
+  addPantryProduct: () => Promise.resolve(),
 });
 
 export const useContextPantry = () => useContext(ContextPantry);
@@ -85,7 +100,27 @@ export const ContextPantryProvider = ({
   }
   async function getLastPriceByProductID(productID: string) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    return 2;
+    return 2.56;
+  }
+
+  async function addPantryProductPriceRecord(
+    productID: string,
+    price: number,
+    date: string,
+    supermarket?: string
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log(productID, price, date, supermarket);
+  }
+  async function addPantryProduct(
+    productID: string,
+    itemCount: number,
+    quantity: number | undefined,
+    unit: string,
+    pricePerItem: number | undefined
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log(productID, itemCount, quantity, unit, pricePerItem);
   }
   // Return ---------------------------
   return (
@@ -98,6 +133,8 @@ export const ContextPantryProvider = ({
         deletePantryProduct,
         getPantryProductByUID,
         getLastPriceByProductID,
+        addPantryProductPriceRecord,
+        addPantryProduct,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import { IonBadge, IonItem, IonLabel, IonSkeletonText } from "@ionic/react";
+import { IonItem, IonLabel, IonNote, IonSpinner } from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryProductStatsLastPriceItem.module.css";
 import { text } from "./text";
@@ -32,18 +32,9 @@ const PantryProductStatsLastPriceItem: React.FC<ContainerProps> = (props) => {
   return (
     <IonItem>
       <IonLabel>
-        <p>{text[l].subtitle}</p>
         <h2>{text[l].title}</h2>
-        <p></p>
       </IonLabel>
-      {loaded ? (
-        <IonBadge color="success">{lastPrice}€</IonBadge>
-      ) : (
-        <IonSkeletonText
-          animated
-          style={{ width: "10%", height: "20px", borderRadius: "8px" }}
-        />
-      )}
+      {loaded ? <IonNote>{lastPrice} €</IonNote> : <IonSpinner />}
     </IonItem>
   );
 };

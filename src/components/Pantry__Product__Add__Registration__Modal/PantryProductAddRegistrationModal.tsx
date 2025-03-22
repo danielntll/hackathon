@@ -1,4 +1,10 @@
-import { IonButton, IonIcon, IonLabel, IonList } from "@ionic/react";
+import {
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonList,
+  IonSpinner,
+} from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryProductAddRegistrationModal.module.css";
 import { text } from "./text";
@@ -9,8 +15,9 @@ import { enumPantryUnit } from "../../enums/enumPantryUnit";
 import { typeOpenFoodQuantityUnitInfo } from "../../types/typeOpenFoodBasicInfo";
 import PantryProductItemCountInput from "../Pantry__Product__ItemCount__Input/PantryProductItemCountInput";
 import PantryProductPricePerItemInput from "../Pantry__Product__PricePerItem__Input/PantryProductPricePerItemInput";
-import { add } from "ionicons/icons";
+import { add, cashOutline } from "ionicons/icons";
 import PantryProductStatsLastPriceItem from "../Pantry__Product__Stats__LastPrice__Item/PantryProductStatsLastPriceItem";
+import { useContextPantry } from "../../context/contextPantry";
 interface ContainerProps {
   quantityUnitInfo?: typeOpenFoodQuantityUnitInfo;
   loaded: boolean;
@@ -20,11 +27,18 @@ interface ContainerProps {
 const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
+  const { addPantryProductPriceRecord, addPantryProduct } = useContextPantry();
   //USE STATES -----------------------
   const [itemCount, setItemCount] = useState<number>(1);
-  const [quantity, setQuantity] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number | undefined>(undefined);
   const [unit, setUnit] = useState<enumPantryUnit>(enumPantryUnit.g);
-  const [pricePerItem, setPricePerItem] = useState<number>(0);
+  const [pricePerItem, setPricePerItem] = useState<number | undefined>(
+    undefined
+  );
+
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [priceRecordUploading, setPriceRecordUploading] =
+    useState<boolean>(false);
   //USE EFFECTS ----------------------
   useEffect(() => {
     if (props.quantityUnitInfo) {
@@ -33,22 +47,43 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
     }
   }, [props.quantityUnitInfo]);
   //FUNCTIONS ------------------------
+  async function addProduct() {
+    setUploading(true);
+    await addPantryProduct(
+      props.scannedID,
+      itemCount,
+      quantity,
+      unit,
+      pricePerItem
+    );
+    setUploading(false);
+  }
+  async function addPriceRecord() {
+    setPriceRecordUploading(true);
+    await addPantryProductPriceRecord(
+      props.scannedID,
+      pricePerItem ?? 0,
+      new Date().toISOString()
+    );
+    setPriceRecordUploading(false);
+  }
   //RETURN COMPONENT -----------------
   return (
     <div>
-      <IonList inset>
-        <PantryProductItemCountInput
-          itemCount={itemCount}
-          setItemCount={setItemCount}
-          loaded={props.loaded}
-        />
-      </IonList>
       <IonList inset>
         <PantryProductPricePerItemInput
           pricePerItem={pricePerItem}
           setPricePerItem={setPricePerItem}
         />
         <PantryProductStatsLastPriceItem productID={props.scannedID} />
+      </IonList>
+
+      <IonList inset>
+        <PantryProductItemCountInput
+          itemCount={itemCount}
+          setItemCount={setItemCount}
+          loaded={props.loaded}
+        />
       </IonList>
       <div>
         <IonList inset>
@@ -70,10 +105,37 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
         </IonLabel>
       </div>
 
+      <div>
+        <IonList inset></IonList>
+      </div>
+
       <div className="ion-padding">
-        <IonButton expand="block" color="success">
+        <IonButton
+          disabled={uploading}
+          onClick={addProduct}
+          expand="block"
+          color="success"
+        >
           <IonLabel>{text[l].addProduct}</IonLabel>
-          <IonIcon className="ion-margin-start-icon" icon={add} />
+          {uploading ? (
+            <IonSpinner className="ion-margin-start-icon" />
+          ) : (
+            <IonIcon className="ion-margin-start-icon" icon={add} />
+          )}
+        </IonButton>
+        <IonButton
+          disabled={priceRecordUploading || !pricePerItem || pricePerItem === 0}
+          onClick={addPriceRecord}
+          expand="block"
+          fill="clear"
+          color="success"
+        >
+          <IonLabel>{text[l].addPriceRecord}</IonLabel>
+          {priceRecordUploading ? (
+            <IonSpinner color={"success"} className="ion-margin-start-icon" />
+          ) : (
+            <IonIcon className="ion-margin-start-icon" icon={cashOutline} />
+          )}
         </IonButton>
       </div>
     </div>

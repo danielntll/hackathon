@@ -14,8 +14,8 @@ import { text } from "./text";
 import { remove, add } from "ionicons/icons";
 
 interface ContainerProps {
-  quantity: number;
-  setQuantity: (quantity: number) => void;
+  quantity: number | undefined;
+  setQuantity: (quantity: number | undefined) => void;
   disableAdd?: boolean;
   disableRemove?: boolean;
   loaded: boolean;
@@ -28,10 +28,14 @@ const PantryProductQuantityInput: React.FC<ContainerProps> = (props) => {
   //USE EFFECTS ----------------------
   //FUNCTIONS ------------------------
   function decrementQuantity() {
-    props.setQuantity(props.quantity > 0 ? props.quantity - 1 : 0);
+    props.setQuantity(
+      props.quantity && props.quantity > 0 ? props.quantity - 1 : 0
+    );
   }
   function incrementQuantity() {
-    props.setQuantity(props.quantity + 1);
+    props.setQuantity(
+      props.quantity && props.quantity > 0 ? props.quantity + 1 : 0
+    );
   }
   function handleQuantityChange(value: string) {
     const newQuantity = parseInt(value);
@@ -49,7 +53,7 @@ const PantryProductQuantityInput: React.FC<ContainerProps> = (props) => {
           label={text[l].quantity}
           type="number"
           labelPlacement="stacked"
-          value={props.quantity.toString()}
+          value={props.quantity?.toString() ?? undefined}
           onIonChange={(e) => handleQuantityChange(e.detail.value!)}
           placeholder={text[l].quantity}
         />

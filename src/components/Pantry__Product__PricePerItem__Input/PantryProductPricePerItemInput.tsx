@@ -4,7 +4,7 @@ import "./PantryProductPricePerItemInput.module.css";
 import { text } from "./text";
 
 interface ContainerProps {
-  pricePerItem: number;
+  pricePerItem: number | undefined;
   setPricePerItem: (pricePerItem: number) => void;
 }
 
@@ -20,8 +20,11 @@ const PantryProductPricePerItemInput: React.FC<ContainerProps> = (props) => {
       <IonInput
         label={text[l].pricePerItem}
         labelPlacement="stacked"
-        value={props.pricePerItem.toString()}
-        onIonChange={(e) => props.setPricePerItem(Number(e.detail.value))}
+        clearInput
+        type="number"
+        placeholder="Inserisci il prezzo"
+        value={props.pricePerItem?.toString() ?? undefined}
+        onIonInput={(e) => props.setPricePerItem(Number(e.detail.value))}
       />
     </IonItem>
   );

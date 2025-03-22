@@ -10,7 +10,7 @@ interface ContainerProps {}
 const ExpenseAddFabButton: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   //USE STATES -----------------------
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [scannedID, setScannedID] = useState<string | undefined>(undefined);
   //USE EFFECTS ----------------------
   useEffect(() => {

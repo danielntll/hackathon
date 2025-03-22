@@ -5,5 +5,4 @@ export interface typePantryProductPriceRecord
   price: number;
   date: string;
   supermarket?: string;
-  isPromotion?: boolean;
 }
