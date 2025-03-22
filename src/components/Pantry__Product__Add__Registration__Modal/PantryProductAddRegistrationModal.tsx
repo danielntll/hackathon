@@ -1,4 +1,4 @@
-import { IonLabel, IonList } from "@ionic/react";
+import { IonButton, IonIcon, IonLabel, IonList } from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryProductAddRegistrationModal.module.css";
 import { text } from "./text";
@@ -8,9 +8,13 @@ import PantryProductUnitInput from "../Pantry__Product__Unit__Input/PantryProduc
 import { enumPantryUnit } from "../../enums/enumPantryUnit";
 import { typeOpenFoodQuantityUnitInfo } from "../../types/typeOpenFoodBasicInfo";
 import PantryProductItemCountInput from "../Pantry__Product__ItemCount__Input/PantryProductItemCountInput";
+import PantryProductPricePerItemInput from "../Pantry__Product__PricePerItem__Input/PantryProductPricePerItemInput";
+import { add } from "ionicons/icons";
+import PantryProductStatsLastPriceItem from "../Pantry__Product__Stats__LastPrice__Item/PantryProductStatsLastPriceItem";
 interface ContainerProps {
   quantityUnitInfo?: typeOpenFoodQuantityUnitInfo;
   loaded: boolean;
+  scannedID: string;
 }
 
 const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
@@ -20,6 +24,7 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
   const [itemCount, setItemCount] = useState<number>(1);
   const [quantity, setQuantity] = useState<number>(0);
   const [unit, setUnit] = useState<enumPantryUnit>(enumPantryUnit.g);
+  const [pricePerItem, setPricePerItem] = useState<number>(0);
   //USE EFFECTS ----------------------
   useEffect(() => {
     if (props.quantityUnitInfo) {
@@ -37,6 +42,13 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
           setItemCount={setItemCount}
           loaded={props.loaded}
         />
+      </IonList>
+      <IonList inset>
+        <PantryProductPricePerItemInput
+          pricePerItem={pricePerItem}
+          setPricePerItem={setPricePerItem}
+        />
+        <PantryProductStatsLastPriceItem productID={props.scannedID} />
       </IonList>
       <div>
         <IonList inset>
@@ -56,6 +68,13 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
         <IonLabel>
           <p className="ion-padding-horizontal">{text[l].quantityInputInfo}</p>
         </IonLabel>
+      </div>
+
+      <div className="ion-padding">
+        <IonButton expand="block" color="success">
+          <IonLabel>{text[l].addProduct}</IonLabel>
+          <IonIcon className="ion-margin-start-icon" icon={add} />
+        </IonButton>
       </div>
     </div>
   );

@@ -52,7 +52,6 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
     }
   }, [props.scannedID]);
   //FUNCTIONS ------------------------
-  const handleSave = () => {};
 
   const getInformations = async (id: string) => {
     setLoaded(false);
@@ -90,12 +89,6 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
             </IonButton>
           </IonButtons>
           <IonTitle>{text[l].title}</IonTitle>
-          <IonButtons slot="end">
-            <IonButton color="success" onClick={handleSave} disabled={isSaving}>
-              {isSaving && <IonSpinner color={"success"} />}
-              {text[l].buttonSave}
-            </IonButton>
-          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -110,7 +103,7 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
         <div className="ion-padding">
           <IonSegment value="first">
             <IonSegmentButton value="first" contentId="first">
-              <IonLabel>Registra dettagli</IonLabel>
+              <IonLabel>Aggiungi prodotto</IonLabel>
             </IonSegmentButton>
             <IonSegmentButton value="second" contentId="second">
               <IonLabel>Info prodotto</IonLabel>
@@ -122,6 +115,7 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
             <PantryProductAddRegistrationModal
               loaded={loaded}
               quantityUnitInfo={quantityUnitInfo}
+              scannedID={props.scannedID}
             />
           </IonSegmentContent>
           <IonSegmentContent id="second">Second</IonSegmentContent>

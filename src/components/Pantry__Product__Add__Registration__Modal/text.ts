@@ -6,6 +6,7 @@ export const text = {
     unit: "Unità",
     quantityInputInfo:
       "Registra la quantità per unità che rappresenterà la quantità del singolo pezzo",
+    addProduct: "Aggiungi prodotto",
   },
   en_GB: {
     title: "Base",
@@ -14,5 +15,6 @@ export const text = {
     unit: "Unit",
     quantityInputInfo:
       "Register the quantity per unit that will represent the quantity of each piece",
+    addProduct: "Add product",
   },
 };
