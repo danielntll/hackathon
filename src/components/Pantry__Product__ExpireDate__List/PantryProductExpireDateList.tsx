@@ -31,7 +31,7 @@ const PantryProductExpireDateList: React.FC<ContainerProps> = (props) => {
     days: 0,
     color: "primary",
   });
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   //USE EFFECTS ----------------------
   useEffect(() => {
     const expirationData = daysUntilExpiration(props.pantryProductExpireDate);
@@ -68,7 +68,13 @@ const PantryProductExpireDateList: React.FC<ContainerProps> = (props) => {
           )}
         </IonItem>
         <IonItem color={"light"}>
-          <IonButton slot="start" color="medium" fill="clear">
+          <IonButton
+            slot="start"
+            color="medium"
+            fill="clear"
+            disabled={!props.loaded}
+            onClick={() => setIsOpen(true)}
+          >
             {text[l].update}
           </IonButton>
         </IonItem>
@@ -78,6 +84,8 @@ const PantryProductExpireDateList: React.FC<ContainerProps> = (props) => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         onDidDismiss={() => setIsOpen(false)}
+        productId={props.pantryProductUID}
+        currentExpirationDate={props.pantryProductExpireDate}
       />
     </>
   );

@@ -4,7 +4,6 @@ import {
   IonContent,
   IonDatetime,
   IonHeader,
-  IonIcon,
   IonSpinner,
   IonTitle,
   IonToolbar,
@@ -14,10 +13,14 @@ import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryProductExpireDateUpdateModal.module.css";
 import { text } from "./text";
 import { useState } from "react";
+import { useContextPantry } from "../../context/contextPantry";
+
 interface ContainerProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onDidDismiss: () => void;
+  productId: string;
+  currentExpirationDate: string;
 }
 
 const PantryProductExpireDateUpdateModal: React.FC<ContainerProps> = (
@@ -25,10 +28,32 @@ const PantryProductExpireDateUpdateModal: React.FC<ContainerProps> = (
 ) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
+  const { updatePantryProductExpirationDate } = useContextPantry();
+
   //USE STATES -----------------------
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  //USE EFFECTS ----------------------
+  const [expirationDate, setExpirationDate] = useState<string>(
+    props.currentExpirationDate
+  );
+
   //FUNCTIONS ------------------------
+  const handleSave = async () => {
+    try {
+      setIsUpdating(true);
+      await updatePantryProductExpirationDate(props.productId, expirationDate);
+      props.setIsOpen(false);
+    } catch (error) {
+      console.error("Error updating expiration date:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setExpirationDate(props.currentExpirationDate);
+    props.setIsOpen(false);
+  };
+
   //RETURN COMPONENT -----------------
   return (
     <IonModal
@@ -39,7 +64,7 @@ const PantryProductExpireDateUpdateModal: React.FC<ContainerProps> = (
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton color="medium" onClick={() => props.setIsOpen(false)}>
+            <IonButton color="medium" onClick={handleCancel}>
               {text[l].close}
             </IonButton>
           </IonButtons>
@@ -47,31 +72,27 @@ const PantryProductExpireDateUpdateModal: React.FC<ContainerProps> = (
           <IonButtons slot="end">
             <IonButton
               color="success"
-              disabled={isUpdating}
-              onClick={() => props.setIsOpen(false)}
+              disabled={
+                isUpdating || expirationDate === props.currentExpirationDate
+              }
+              onClick={handleSave}
             >
-              {isUpdating && <IonSpinner color={"success"} />}
+              {isUpdating && <IonSpinner name="crescent" />}
               {text[l].save}
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="ion-padding">
         <IonDatetime
           id="datetime"
-          presentation="date-time"
-          value="2023-11-02T01:22:00"
-          formatOptions={{
-            date: {
-              weekday: "short",
-              month: "long",
-              day: "2-digit",
-            },
-            time: {
-              hour: "2-digit",
-              minute: "2-digit",
-            },
-          }}
+          presentation="date"
+          value={expirationDate}
+          onIonChange={(e) =>
+            setExpirationDate(e.detail.value?.toString() || "")
+          }
+          min={new Date().toISOString()}
+          locale={l === "it_IT" ? "it-IT" : "en-GB"}
         ></IonDatetime>
       </IonContent>
     </IonModal>

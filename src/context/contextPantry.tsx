@@ -15,6 +15,10 @@ type typeContextPantry = {
   getPantryProductByUID: (
     uid: string
   ) => Promise<typePantryProduct | undefined>;
+  updatePantryProductExpirationDate: (
+    uid: string,
+    expirationDate: string
+  ) => Promise<void>;
 };
 
 const ContextPantry = createContext<typeContextPantry>({
@@ -23,6 +27,7 @@ const ContextPantry = createContext<typeContextPantry>({
   addPantryProductConsumptionEvent: () => Promise.resolve(),
   deletePantryProduct: () => Promise.resolve(),
   getPantryProductByUID: () => Promise.resolve(undefined),
+  updatePantryProductExpirationDate: () => Promise.resolve(),
 });
 
 export const useContextPantry = () => useContext(ContextPantry);
@@ -64,12 +69,25 @@ export const ContextPantryProvider = ({
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return pantryProducts.find((pantryProduct) => pantryProduct.uid === uid);
   }
+  async function updatePantryProductExpirationDate(
+    uid: string,
+    expirationDate: string
+  ) {
+    setPantryProducts((prev) =>
+      prev.map((pantryProduct) =>
+        pantryProduct.uid === uid
+          ? { ...pantryProduct, expirationDate }
+          : pantryProduct
+      )
+    );
+  }
   // Return ---------------------------
   return (
     <ContextPantry.Provider
       value={{
         pantryProducts,
         updatePantryProductQuantity,
+        updatePantryProductExpirationDate,
         addPantryProductConsumptionEvent,
         deletePantryProduct,
         getPantryProductByUID,
