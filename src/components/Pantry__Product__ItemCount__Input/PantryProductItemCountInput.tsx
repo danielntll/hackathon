@@ -9,36 +9,34 @@ import {
   IonText,
 } from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
-import "./PantryProductQuantityInput.module.css";
+import "./PantryProductItemCountInput.module.css";
 import { text } from "./text";
 import { remove, add } from "ionicons/icons";
 
 interface ContainerProps {
-  quantity: number;
-  setQuantity: (quantity: number) => void;
-  disableAdd?: boolean;
-  disableRemove?: boolean;
+  itemCount: number;
+  setItemCount: (itemCount: number) => void;
   loaded: boolean;
 }
 
-const PantryProductQuantityInput: React.FC<ContainerProps> = (props) => {
+const PantryProductItemCountInput: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
   //USE STATES -----------------------
   //USE EFFECTS ----------------------
   //FUNCTIONS ------------------------
-  function decrementQuantity() {
-    props.setQuantity(props.quantity > 0 ? props.quantity - 1 : 0);
+  function decrementItemCount() {
+    props.setItemCount(props.itemCount > 1 ? props.itemCount - 1 : 1);
   }
-  function incrementQuantity() {
-    props.setQuantity(props.quantity + 1);
+  function incrementItemCount() {
+    props.setItemCount(props.itemCount + 1);
   }
-  function handleQuantityChange(value: string) {
-    const newQuantity = parseInt(value);
-    if (isNaN(newQuantity) || newQuantity < 0) {
-      props.setQuantity(0);
+  function handleItemCountChange(value: string) {
+    const newItemCount = parseInt(value);
+    if (isNaN(newItemCount) || newItemCount < 1) {
+      props.setItemCount(1);
     } else {
-      props.setQuantity(Math.min(Math.max(0, newQuantity), 0));
+      props.setItemCount(Math.max(1, newItemCount));
     }
   }
   //RETURN COMPONENT -----------------
@@ -46,17 +44,18 @@ const PantryProductQuantityInput: React.FC<ContainerProps> = (props) => {
     <IonItem>
       {props.loaded ? (
         <IonInput
-          label={text[l].quantity}
+          label={text[l].itemCount}
           type="number"
+          min={1}
           labelPlacement="stacked"
-          value={props.quantity.toString()}
-          onIonChange={(e) => handleQuantityChange(e.detail.value!)}
-          placeholder={text[l].quantity}
+          value={props.itemCount.toString()}
+          onIonChange={(e) => handleItemCountChange(e.detail.value!)}
+          placeholder={text[l].itemCount}
         />
       ) : (
         <IonLabel>
           <IonText>
-            <p style={{ fontSize: "12px" }}>{text[l].quantity}</p>
+            <p style={{ fontSize: "12px" }}>{text[l].itemCount}</p>
           </IonText>
           <IonSkeletonText
             animated={true}
@@ -70,17 +69,12 @@ const PantryProductQuantityInput: React.FC<ContainerProps> = (props) => {
             className="ion-margin-end"
             size="small"
             fill="outline"
-            onClick={decrementQuantity}
-            disabled={props.disableRemove}
+            onClick={decrementItemCount}
+            disabled={props.itemCount === 1}
           >
             <IonIcon icon={remove} />
           </IonButton>
-          <IonButton
-            size="small"
-            fill="outline"
-            onClick={incrementQuantity}
-            disabled={props.disableAdd}
-          >
+          <IonButton size="small" fill="outline" onClick={incrementItemCount}>
             <IonIcon icon={add} />
           </IonButton>
         </>
@@ -93,4 +87,4 @@ const PantryProductQuantityInput: React.FC<ContainerProps> = (props) => {
   );
 };
 
-export default PantryProductQuantityInput;
+export default PantryProductItemCountInput;

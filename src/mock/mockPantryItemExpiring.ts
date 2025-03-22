@@ -1,4 +1,5 @@
-import { typePantryProduct, enumPantryUnit } from "../types/typePantryProduct";
+import { typePantryProduct } from "../types/typePantryProduct";
+import { enumPantryUnit } from "../enums/enumPantryUnit";
 
 export const mockPantryItemExpiring: typePantryProduct[] = [
   // Scaduto

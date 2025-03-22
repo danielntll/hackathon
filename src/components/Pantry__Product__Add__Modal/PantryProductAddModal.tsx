@@ -47,7 +47,9 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
   >(undefined);
   //USE EFFECTS ----------------------
   useEffect(() => {
-    getInformations(props.scannedID);
+    if (props.scannedID) {
+      getInformations(props.scannedID);
+    }
   }, [props.scannedID]);
   //FUNCTIONS ------------------------
   const handleSave = () => {};
@@ -69,13 +71,21 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
     }
   };
 
+  const handleClose = () => {
+    setIsSaving(false);
+    setLoaded(false);
+    setBasicInfo(undefined);
+    setQuantityUnitInfo(undefined);
+    props.setIsOpen(false);
+  };
+
   //RETURN COMPONENT -----------------
   return (
     <IonModal isOpen={props.isOpen}>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton color="medium" onClick={() => props.setIsOpen(false)}>
+            <IonButton color="medium" onClick={handleClose}>
               {text[l].buttonClose}
             </IonButton>
           </IonButtons>

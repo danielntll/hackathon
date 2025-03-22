@@ -3,7 +3,7 @@ import "./ExpenseAddFabButton.module.css";
 import { text } from "./text";
 import { IonFab, IonFabButton, IonIcon } from "@ionic/react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PantryProductAddModal from "../Pantry__Product__Add__Modal/PantryProductAddModal";
 interface ContainerProps {}
 
@@ -11,19 +11,29 @@ const ExpenseAddFabButton: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   //USE STATES -----------------------
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [scannedID, setScannedID] = useState<string | undefined>(undefined);
   //USE EFFECTS ----------------------
+  useEffect(() => {
+    if (scannedID) {
+      setIsOpen(true);
+    }
+  }, [scannedID]);
   //FUNCTIONS ------------------------
-  const handleOpenModal = () => {
+  function getScannedID() {
+    setScannedID("3017620422003");
+  }
+  function handleOpenModal() {
     setIsOpen(true);
-  };
-  const handleCloseModal = () => {
+  }
+  function handleCloseModal() {
     setIsOpen(false);
-  };
+    setScannedID(undefined);
+  }
   //RETURN COMPONENT -----------------
   return (
     <>
       <IonFab slot="fixed" vertical="bottom" horizontal="center">
-        <IonFabButton onClick={handleOpenModal}>
+        <IonFabButton onClick={getScannedID}>
           <IonIcon icon={add}></IonIcon>
         </IonFabButton>
       </IonFab>
@@ -31,7 +41,7 @@ const ExpenseAddFabButton: React.FC<ContainerProps> = (props) => {
       <PantryProductAddModal
         isOpen={isOpen}
         setIsOpen={handleCloseModal}
-        scannedID="3017620422003"
+        scannedID={scannedID ?? ""}
       />
     </>
   );
