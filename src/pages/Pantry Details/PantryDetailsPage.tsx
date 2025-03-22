@@ -21,7 +21,6 @@ import { route__HomePage } from "../Home/route";
 import PantryProductBaseInfo from "../../components/Pantry__Product__Base__Info/PantryProductBaseInfo";
 import { route__PantryDetailsPage } from "./route";
 import { typePantryProduct } from "../../types/typePantryProduct";
-import { mockPantryItemExpiring } from "../../mock/mockPantryItemExpiring";
 import PantryProductManageQuantity from "../../components/Pantry__Product__Manage__Quantity/PantryProductManageQuantity";
 import PantryProductExpireDateList from "../../components/Pantry__Product__ExpireDate__List/PantryProductExpireDateList";
 import { useContextPantry } from "../../context/contextPantry";

@@ -17,8 +17,14 @@ import "./PantryProductAddModal.module.css";
 import { text } from "./text";
 import { useState, useEffect } from "react";
 import PantryProductBaseInfo from "../Pantry__Product__Base__Info/PantryProductBaseInfo";
-import { getBasicProductInfo } from "../../utils/openFoodApis";
-import { typeOpenFoodBasicInfo } from "../../types/typeOpenFoodBasicInfo";
+import {
+  getBasicProductInfo,
+  getProductQuantityUnitInfo,
+} from "../../utils/openFoodApis";
+import {
+  typeOpenFoodBasicInfo,
+  typeOpenFoodQuantityUnitInfo,
+} from "../../types/typeOpenFoodBasicInfo";
 import PantryProductAddRegistrationModal from "../Pantry__Product__Add__Registration__Modal/PantryProductAddRegistrationModal";
 
 interface ContainerProps {
@@ -30,13 +36,15 @@ interface ContainerProps {
 const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
-  const baseUrl = import.meta.env.VITE_OPENFOODFACTS_API_URL;
   //USE STATES -----------------------
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [basicInfo, setBasicInfo] = useState<typeOpenFoodBasicInfo | undefined>(
     undefined
   );
+  const [quantityUnitInfo, setQuantityUnitInfo] = useState<
+    typeOpenFoodQuantityUnitInfo | undefined
+  >(undefined);
   //USE EFFECTS ----------------------
   useEffect(() => {
     getInformations(props.scannedID);
@@ -47,8 +55,13 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
   const getInformations = async (id: string) => {
     setLoaded(false);
     try {
-      const basicInfo: typeOpenFoodBasicInfo = await getBasicProductInfo(id);
+      const [basicInfo, quantityUnitInfo] = await Promise.all([
+        getBasicProductInfo(id),
+        getProductQuantityUnitInfo(id),
+      ]);
+
       setBasicInfo(basicInfo);
+      setQuantityUnitInfo(quantityUnitInfo);
     } catch (error) {
       console.error("Error fetching data from OpenFoodFacts:", error);
     } finally {
@@ -96,7 +109,10 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
         </div>
         <IonSegmentView>
           <IonSegmentContent id="first">
-            <PantryProductAddRegistrationModal />
+            <PantryProductAddRegistrationModal
+              loaded={loaded}
+              quantityUnitInfo={quantityUnitInfo}
+            />
           </IonSegmentContent>
           <IonSegmentContent id="second">Second</IonSegmentContent>
         </IonSegmentView>

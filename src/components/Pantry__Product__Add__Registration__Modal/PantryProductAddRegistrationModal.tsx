@@ -1,58 +1,47 @@
-import { IonButton, IonIcon, IonInput, IonItem, IonList } from "@ionic/react";
+import { IonList } from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryProductAddRegistrationModal.module.css";
 import { text } from "./text";
-import { add } from "ionicons/icons";
-import { remove } from "ionicons/icons";
-import { useState } from "react";
-interface ContainerProps {}
+import { useState, useEffect } from "react";
+import PantryProductQuantityInput from "../Pantry__Product__Quantity__Input/PantryProductQuantityInput";
+import PantryProductUnitInput from "../Pantry__Product__Unit__Input/PantryProductUnitInput";
+import { enumPantryUnit } from "../../enums/enumPantryUnit";
+import { typeOpenFoodQuantityUnitInfo } from "../../types/typeOpenFoodBasicInfo";
+interface ContainerProps {
+  quantityUnitInfo?: typeOpenFoodQuantityUnitInfo;
+  loaded: boolean;
+}
 
 const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
   //USE STATES -----------------------
   const [quantity, setQuantity] = useState<number>(0);
+  const [unit, setUnit] = useState<enumPantryUnit>(enumPantryUnit.g);
   //USE EFFECTS ----------------------
-  //FUNCTIONS ------------------------
-  function decrementQuantity() {
-    setQuantity(quantity > 0 ? quantity - 1 : 0);
-  }
-  function incrementQuantity() {
-    setQuantity(quantity + 1);
-  }
-  function handleQuantityChange(value: string) {
-    const newQuantity = parseInt(value);
-    if (isNaN(newQuantity) || newQuantity < 0) {
-      setQuantity(0);
-    } else {
-      setQuantity(Math.min(Math.max(0, newQuantity), 0));
+  useEffect(() => {
+    if (props.quantityUnitInfo) {
+      setQuantity(parseInt(props.quantityUnitInfo.product_quantity));
+      setUnit(props.quantityUnitInfo.product_quantity_unit);
     }
-  }
+  }, [props.quantityUnitInfo]);
+  //FUNCTIONS ------------------------
   //RETURN COMPONENT -----------------
   return (
     <div>
       <IonList inset>
-        <IonItem>
-          <IonInput
-            label={text[l].quantity}
-            type="number"
-            labelPlacement="stacked"
-            value={quantity.toString()}
-            onIonChange={(e) => handleQuantityChange(e.detail.value!)}
-            placeholder={text[l].quantity}
-          ></IonInput>
-          <IonButton
-            className="ion-margin-end"
-            size="small"
-            fill="outline"
-            onClick={decrementQuantity}
-          >
-            <IonIcon icon={remove} />
-          </IonButton>
-          <IonButton size="small" fill="outline" onClick={incrementQuantity}>
-            <IonIcon icon={add} />
-          </IonButton>
-        </IonItem>
+        {props.loaded && (
+          <>
+            <PantryProductQuantityInput
+              quantity={quantity}
+              setQuantity={setQuantity}
+              disableAdd={false}
+              disableRemove={false}
+              loaded={props.loaded}
+            />
+            <PantryProductUnitInput unit={unit} setUnit={setUnit} />
+          </>
+        )}
       </IonList>
     </div>
   );

@@ -1,4 +1,8 @@
-import { typeOpenFoodBasicInfo } from "../types/typeOpenFoodBasicInfo";
+import { enumPantryUnit } from "../enums/enumPantryUnit";
+import {
+  typeOpenFoodBasicInfo,
+  typeOpenFoodQuantityUnitInfo,
+} from "../types/typeOpenFoodBasicInfo";
 
 export const getBasicProductInfo = async (
   id: string
@@ -7,7 +11,6 @@ export const getBasicProductInfo = async (
   const productNameApiUrl = `${baseUrl}/product/${id}?product_type=all&fields=product_name`;
   const productImageApiUrl = `${baseUrl}/product/${id}?product_type=all&fields=image_url`;
   const productBrandTagsApiUrl = `${baseUrl}/product/${id}?product_type=all&fields=brands_tags`;
-
   try {
     const [nameResponse, imageResponse, brandResponse] = await Promise.all([
       fetch(productNameApiUrl),
@@ -28,6 +31,36 @@ export const getBasicProductInfo = async (
     };
 
     return basicInfo;
+  } catch (error) {
+    console.error("Error fetching data from OpenFoodFacts:", error);
+    throw error;
+  }
+};
+
+export const getProductQuantityUnitInfo = async (
+  id: string
+): Promise<typeOpenFoodQuantityUnitInfo> => {
+  const baseUrl = import.meta.env.VITE_OPENFOODFACTS_API_URL;
+  const productQuantityUnitApiUrl = `${baseUrl}/product/${id}?product_type=all&fields=product_quantity_unit`;
+  const productQuantityApiUrl = `${baseUrl}/product/${id}?product_type=all&fields=product_quantity`;
+  try {
+    const [quantityUnitResponse, quantityResponse] = await Promise.all([
+      fetch(productQuantityUnitApiUrl),
+      fetch(productQuantityApiUrl),
+    ]);
+
+    const [quantityUnitData, quantityData] = await Promise.all([
+      quantityUnitResponse.json(),
+      quantityResponse.json(),
+    ]);
+
+    const quantityUnitInfo: typeOpenFoodQuantityUnitInfo = {
+      product_quantity_unit: quantityUnitData.product
+        .product_quantity_unit as enumPantryUnit,
+      product_quantity: quantityData.product.product_quantity,
+    };
+
+    return quantityUnitInfo;
   } catch (error) {
     console.error("Error fetching data from OpenFoodFacts:", error);
     throw error;
