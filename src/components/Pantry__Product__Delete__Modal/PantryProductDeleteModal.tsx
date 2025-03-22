@@ -24,13 +24,17 @@ interface ContainerProps {
 const PantryProductDeleteModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
-  const { pantryProduct } = useContextPantry();
+  const { deletePantryProduct } = useContextPantry();
   //USE STATES -----------------------
   const [description, setDescription] = useState<string>("");
   //USE EFFECTS ----------------------
   //FUNCTIONS ------------------------
   async function handleDelete() {
-    await deletePantryProduct(props.pantryProductUID);
+    await deletePantryProduct({
+      productUID: props.pantryProductUID,
+      description: description,
+      uid: "",
+    });
     props.setIsOpen(false);
   }
   //RETURN COMPONENT -----------------
@@ -47,7 +51,7 @@ const PantryProductDeleteModal: React.FC<ContainerProps> = (props) => {
             <h1>Sei sicuro di voler eliminare questo prodotto?</h1>
             <p>
               Questa azione è irreversibile e il prodotto verrà eliminato dalla
-              tua dispensa.
+              cd tua dispensa.
             </p>
           </IonLabel>
         </div>
@@ -59,6 +63,8 @@ const PantryProductDeleteModal: React.FC<ContainerProps> = (props) => {
                 labelPlacement="stacked"
                 label={text[l].descriptionLabel}
                 placeholder={text[l].descriptionPlaceholder}
+                value={description}
+                onIonChange={(e) => setDescription(e.detail.value ?? "")}
               />
             </IonItem>
           </IonList>

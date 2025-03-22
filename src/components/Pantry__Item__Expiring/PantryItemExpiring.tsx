@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./PantryItemExpiring.module.css";
 import { text } from "./text";
 import { IonAvatar, IonBadge, IonItem, IonLabel, IonText } from "@ionic/react";
@@ -7,6 +7,8 @@ import { useContextLanguage } from "../../context/contextLanguage";
 import { differenceInDays, parse } from "date-fns";
 import { useHistory } from "react-router-dom";
 import { route__PantryDetailsPage } from "../../pages/Pantry Details/route";
+import { daysUntilExpiration } from "../../utils/daysUntilExpiration";
+import { typeExpirationData } from "../../types/typeExpirationData";
 
 const PantryItemExpiring: React.FC<typePantryProduct> = React.memo(
   (props) => {
@@ -14,35 +16,20 @@ const PantryItemExpiring: React.FC<typePantryProduct> = React.memo(
     const { l } = useContextLanguage();
     const history = useHistory();
     //FUNCTIONS ------------------------
-    function daysUntilExpiration() {
-      try {
-        if (!props.expirationDate) return 0;
-        const expirationDate = parse(
-          props.expirationDate,
-          "dd/MM/yyyy",
-          new Date()
-        );
-        if (isNaN(expirationDate.getTime())) return 0;
-        const today = new Date();
-        const daysUntilExpiration = differenceInDays(expirationDate, today);
-        return daysUntilExpiration;
-      } catch (error) {
-        console.error("Error calculating expiration days:", error);
-        return 0;
-      }
-    }
 
-    function getBadgeColor() {
-      const days = daysUntilExpiration();
-      if (days <= 0) return "danger";
-      if (days <= 3) return "warning";
-      return "primary";
-    }
     function openDetails(id: string) {
       history.push(route__PantryDetailsPage.path_base + "/" + id);
     }
     //USE STATES -----------------------
+    const [expirationData, setExpirationData] = useState<typeExpirationData>({
+      days: 0,
+      color: "primary",
+    });
     //USE EFFECTS ----------------------
+    useEffect(() => {
+      const expirationData = daysUntilExpiration(props.expirationDate);
+      setExpirationData(expirationData);
+    }, [props.expirationDate]);
     //RETURN COMPONENT -----------------
     return (
       <IonItem
@@ -69,8 +56,8 @@ const PantryItemExpiring: React.FC<typePantryProduct> = React.memo(
             </strong>
           </p>
         </IonLabel>
-        <IonBadge color={getBadgeColor()}>
-          {daysUntilExpiration()} {text[l].days}
+        <IonBadge color={expirationData.color}>
+          {expirationData.days} {text[l].days}
         </IonBadge>
       </IonItem>
     );

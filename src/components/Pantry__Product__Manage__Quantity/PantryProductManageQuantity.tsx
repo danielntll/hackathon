@@ -6,16 +6,12 @@ import {
   IonButton,
   IonIcon,
   IonSkeletonText,
+  IonText,
 } from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryProductManageQuantity.module.css";
 import { text } from "./text";
-import {
-  restaurant,
-  restaurantOutline,
-  trash,
-  trashOutline,
-} from "ionicons/icons";
+import { restaurantOutline } from "ionicons/icons";
 import PantryProductConsumeModal from "../Pantry__Product__Consume__Modal/PantryProductConsumeModal";
 import { useState } from "react";
 import PantryProductDeleteModal from "../Pantry__Product__Delete__Modal/PantryProductDeleteModal";
@@ -23,6 +19,7 @@ import PantryProductDeleteModal from "../Pantry__Product__Delete__Modal/PantryPr
 interface ContainerProps {
   pantryProductUID: string;
   pantryProductQuantity: number;
+  pantryProductUnit: string;
   loaded: boolean;
 }
 
@@ -40,7 +37,12 @@ const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
       <IonList inset>
         <IonItem color={"light"}>
           <IonLabel>
-            <p>Quantità</p>
+            {text[l].quantity}
+            <IonText color={"medium"}>
+              <p>
+                {text[l].unit}: {props.pantryProductUnit}
+              </p>
+            </IonText>
           </IonLabel>
           <IonNote className="ion-margin-end">
             {props.loaded ? (
@@ -58,6 +60,7 @@ const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
             slot="start"
             fill="clear"
             color="danger"
+            disabled={props.pantryProductQuantity === 0 || !props.loaded}
             onClick={() => setIsOpenDelete(true)}
           >
             {text[l].delete}
@@ -65,6 +68,7 @@ const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
           <IonButton
             slot="end"
             fill="clear"
+            disabled={props.pantryProductQuantity === 0 || !props.loaded}
             color="primary"
             onClick={() => setIsOpen(true)}
           >
@@ -77,15 +81,9 @@ const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
         </IonItem>
       </IonList>
 
-      <div className="ion-padding-horizontal">
-        <IonLabel>
-          <p>
-            <IonIcon icon={restaurant} /> {text[l].pantryProductManageQuantity}
-          </p>
-        </IonLabel>
-      </div>
       {/* ----------------- MODAL ----------------------*/}
       <PantryProductConsumeModal
+        pantryProductUnit={props.pantryProductUnit}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         onDidDismiss={() => setIsOpen(false)}

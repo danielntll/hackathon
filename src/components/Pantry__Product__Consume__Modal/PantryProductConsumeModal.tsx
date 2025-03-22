@@ -36,12 +36,13 @@ interface ContainerProps {
   onDidDismiss: () => void;
   quantity: number;
   pantryProductUID: string;
+  pantryProductUnit: string;
 }
 
 const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
-  const { addConsumptionEvent } = useContextPantry();
+  const { addPantryProductConsumptionEvent } = useContextPantry();
 
   //FUNCTIONS ------------------------
   function decrementQuantity() {
@@ -61,7 +62,7 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
 
   async function handleSave() {
     setIsSaving(true);
-    await addConsumptionEvent({
+    await addPantryProductConsumptionEvent({
       uid: "",
       productUID: props.pantryProductUID,
       quantity: quantity,
@@ -122,7 +123,9 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
             <IonList inset>
               <IonItem>
                 <IonInput
-                  label={text[l].quantity}
+                  label={
+                    text[l].quantity + " (" + props.pantryProductUnit + ")"
+                  }
                   type="number"
                   labelPlacement="stacked"
                   value={quantity.toString()}

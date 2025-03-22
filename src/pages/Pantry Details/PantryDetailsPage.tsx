@@ -3,7 +3,12 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonLabel,
   IonPage,
+  IonSegment,
+  IonSegmentButton,
+  IonSegmentContent,
+  IonSegmentView,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -19,11 +24,12 @@ import { typePantryProduct } from "../../types/typePantryProduct";
 import { mockPantryItemExpiring } from "../../mock/mockPantryItemExpiring";
 import PantryProductManageQuantity from "../../components/Pantry__Product__Manage__Quantity/PantryProductManageQuantity";
 import PantryProductExpireDateList from "../../components/Pantry__Product__ExpireDate__List/PantryProductExpireDateList";
-
+import { useContextPantry } from "../../context/contextPantry";
 const PantryDetailsPage: React.FC = () => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
   const { pantryProductID }: any = useParams<any>();
+  const { getPantryProductByUID } = useContextPantry();
   //USE STATES -----------------------
   const [pantryProduct, setPantryProduct] = useState<
     typePantryProduct | undefined
@@ -32,17 +38,13 @@ const PantryDetailsPage: React.FC = () => {
   //USE EFFECTS ----------------------
   useEffect(() => {
     if (pantryProductID) {
-      _fetchPantryProduct(pantryProductID);
+      loadPantryProduct(pantryProductID);
     }
   }, [pantryProductID]);
   //FUNCTIONS ------------------------
-  async function _fetchPantryProduct(pantryProductID: string) {
+  async function loadPantryProduct(pantryProductID: string) {
     setLoaded(false);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const pantryProduct = mockPantryItemExpiring.find(
-      (pantryProduct: typePantryProduct) =>
-        pantryProduct.uid === pantryProductID
-    );
+    const pantryProduct = await getPantryProductByUID(pantryProductID);
     setPantryProduct(pantryProduct);
     setLoaded(true);
   }
@@ -68,6 +70,7 @@ const PantryDetailsPage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         {/* ----------------- PAGE CONTENT ------------------*/}
+
         <div className={styles.content}>
           <PantryProductBaseInfo
             loaded={loaded}
@@ -75,18 +78,39 @@ const PantryDetailsPage: React.FC = () => {
             title={pantryProduct?.name ?? ""}
             imageUrl={pantryProduct?.image ?? ""}
           />
-          <PantryProductManageQuantity
-            loaded={loaded}
-            pantryProductUID={pantryProduct?.uid ?? ""}
-            pantryProductQuantity={pantryProduct?.quantity ?? 0}
-          />
-          <PantryProductExpireDateList
-            loaded={loaded}
-            pantryProductUID={pantryProduct?.uid ?? ""}
-            pantryProductQuantity={pantryProduct?.quantity ?? 0}
-            pantryProductExpireDate={pantryProduct?.expirationDate ?? ""}
-          />
         </div>
+        <div className="ion-padding">
+          <IonSegment value="dispensa">
+            <IonSegmentButton value="dispensa" contentId="dispensa">
+              <IonLabel>{text[l].dispensa}</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="descrizione" contentId="descrizione">
+              <IonLabel>{text[l].descrizione}</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
+        </div>
+
+        <IonSegmentView>
+          <IonSegmentContent id="dispensa">
+            <div>
+              <PantryProductExpireDateList
+                loaded={loaded}
+                pantryProductUID={pantryProduct?.uid ?? ""}
+                pantryProductQuantity={pantryProduct?.quantity ?? 0}
+                pantryProductExpireDate={pantryProduct?.expirationDate ?? ""}
+              />
+              <PantryProductManageQuantity
+                loaded={loaded}
+                pantryProductUID={pantryProduct?.uid ?? ""}
+                pantryProductQuantity={pantryProduct?.quantity ?? 0}
+                pantryProductUnit={pantryProduct?.unit ?? ""}
+              />
+            </div>
+          </IonSegmentContent>
+          <IonSegmentContent id="descrizione">
+            <div>CHIAMATA API PER RECUPERARE LA DESCRIZIONE</div>
+          </IonSegmentContent>
+        </IonSegmentView>
         {/* ----------------- EXTRA UI ----------------------*/}
       </IonContent>
     </IonPage>

@@ -6,17 +6,23 @@ import { typeEvent__PantryProduct__Delete } from "../types/typeEvent__PantryProd
 type typeContextPantry = {
   pantryProducts: typePantryProduct[];
   updatePantryProductQuantity: (uid: string, quantity: number) => void;
-  addConsumptionEvent: (
+  addPantryProductConsumptionEvent: (
     event: typeEvent__PantryProduct__Consumption
   ) => Promise<void>;
-  deletePantryProduct: (uid: string) => Promise<void>;
+  deletePantryProduct: (
+    event: typeEvent__PantryProduct__Delete
+  ) => Promise<void>;
+  getPantryProductByUID: (
+    uid: string
+  ) => Promise<typePantryProduct | undefined>;
 };
 
 const ContextPantry = createContext<typeContextPantry>({
   pantryProducts: [],
   updatePantryProductQuantity: () => {},
-  addConsumptionEvent: () => Promise.resolve(),
+  addPantryProductConsumptionEvent: () => Promise.resolve(),
   deletePantryProduct: () => Promise.resolve(),
+  getPantryProductByUID: () => Promise.resolve(undefined),
 });
 
 export const useContextPantry = () => useContext(ContextPantry);
@@ -43,16 +49,20 @@ export const ContextPantryProvider = ({
       )
     );
   }
-  async function addConsumptionEvent(
+  async function addPantryProductConsumptionEvent(
     event: typeEvent__PantryProduct__Consumption
   ) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(event);
   }
-  async function deletePantryProduct(uid: string) {
+  async function deletePantryProduct(event: typeEvent__PantryProduct__Delete) {
     setPantryProducts((prev) =>
-      prev.filter((pantryProduct) => pantryProduct.uid !== uid)
+      prev.filter((pantryProduct) => pantryProduct.uid !== event.productUID)
     );
+  }
+  async function getPantryProductByUID(uid: string) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return pantryProducts.find((pantryProduct) => pantryProduct.uid === uid);
   }
   // Return ---------------------------
   return (
@@ -60,8 +70,9 @@ export const ContextPantryProvider = ({
       value={{
         pantryProducts,
         updatePantryProductQuantity,
-        addConsumptionEvent,
+        addPantryProductConsumptionEvent,
         deletePantryProduct,
+        getPantryProductByUID,
       }}
     >
       {children}

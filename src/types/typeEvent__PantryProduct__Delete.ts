@@ -3,7 +3,6 @@ import { typeFirebaseDataStructure } from "./typeFirebaseDataStructure";
 
 export interface typeEvent__PantryProduct__Delete extends typeFirebaseDataStructure{
   productUID: string;
-  quantity: number;
-  date: string;
-  mealType: enumMealType;   
+  description: string;
+  
 };
