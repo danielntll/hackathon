@@ -1,4 +1,14 @@
-import { IonButton, IonModal, IonSpinner, IonTitle } from "@ionic/react";
+import {
+  IonButton,
+  IonLabel,
+  IonModal,
+  IonSegment,
+  IonSegmentButton,
+  IonSegmentContent,
+  IonSegmentView,
+  IonSpinner,
+  IonTitle,
+} from "@ionic/react";
 import { IonButtons } from "@ionic/react";
 import { IonHeader, IonToolbar } from "@ionic/react";
 import { IonContent } from "@ionic/react";
@@ -7,6 +17,9 @@ import "./PantryProductAddModal.module.css";
 import { text } from "./text";
 import { useState, useEffect } from "react";
 import PantryProductBaseInfo from "../Pantry__Product__Base__Info/PantryProductBaseInfo";
+import { getBasicProductInfo } from "../../utils/openFoodApis";
+import { typeOpenFoodBasicInfo } from "../../types/typeOpenFoodBasicInfo";
+import PantryProductAddRegistrationModal from "../Pantry__Product__Add__Registration__Modal/PantryProductAddRegistrationModal";
 
 interface ContainerProps {
   isOpen: boolean;
@@ -17,9 +30,13 @@ interface ContainerProps {
 const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
+  const baseUrl = import.meta.env.VITE_OPENFOODFACTS_API_URL;
   //USE STATES -----------------------
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [basicInfo, setBasicInfo] = useState<typeOpenFoodBasicInfo | undefined>(
+    undefined
+  );
   //USE EFFECTS ----------------------
   useEffect(() => {
     getInformations(props.scannedID);
@@ -28,19 +45,17 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
   const handleSave = () => {};
 
   const getInformations = async (id: string) => {
-    setIsLoading(true);
-    // Fetch data from OpenFoodFacts API
-    const apiUrl = `https://world.openfoodfacts.org/api/v0/product/${id}.json`;
+    setLoaded(false);
     try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      console.log(data);
+      const basicInfo: typeOpenFoodBasicInfo = await getBasicProductInfo(id);
+      setBasicInfo(basicInfo);
     } catch (error) {
       console.error("Error fetching data from OpenFoodFacts:", error);
     } finally {
-      setIsLoading(false);
+      setLoaded(true);
     }
   };
+
   //RETURN COMPONENT -----------------
   return (
     <IonModal isOpen={props.isOpen}>
@@ -61,12 +76,30 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        {/* ----------------- BASIC INFO ----------------------*/}
         <PantryProductBaseInfo
-          subtitle={data.product.name}
-          title={data.product.name}
-          imageUrl={data.product.image_url}
-          loaded={isLoading}
+          subtitle={basicInfo?.brands_tags.join(", ") || ""}
+          title={basicInfo?.name || ""}
+          imageUrl={basicInfo?.image_url || ""}
+          loaded={loaded}
         />
+        {/* ----------------- BASIC INFO ----------------------*/}
+        <div className="ion-padding">
+          <IonSegment value="first">
+            <IonSegmentButton value="first" contentId="first">
+              <IonLabel>Registra dettagli</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="second" contentId="second">
+              <IonLabel>Info prodotto</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
+        </div>
+        <IonSegmentView>
+          <IonSegmentContent id="first">
+            <PantryProductAddRegistrationModal />
+          </IonSegmentContent>
+          <IonSegmentContent id="second">Second</IonSegmentContent>
+        </IonSegmentView>
       </IonContent>
     </IonModal>
   );

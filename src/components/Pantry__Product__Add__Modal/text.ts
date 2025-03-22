@@ -1,11 +1,11 @@
 export const text = {
   it_IT: {
-    title: "Ricerca",
+    title: "Aggiungi Prodotto",
     buttonClose: "Chiudi",
     buttonSave: "Salva",
   },
   en_GB: {
-    title: "Search",
+    title: "Add Product",
     buttonClose: "Close",
     buttonSave: "Save",
   },

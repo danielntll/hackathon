@@ -2,14 +2,15 @@ import { add } from "ionicons/icons";
 import "./ExpenseAddFabButton.module.css";
 import { text } from "./text";
 import { IonFab, IonFabButton, IonIcon } from "@ionic/react";
-import ExpenseAddModal from "../Expense__Add__Modal/ExpenseAddModal";
+
 import { useState } from "react";
+import PantryProductAddModal from "../Pantry__Product__Add__Modal/PantryProductAddModal";
 interface ContainerProps {}
 
 const ExpenseAddFabButton: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   //USE STATES -----------------------
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   //USE EFFECTS ----------------------
   //FUNCTIONS ------------------------
   const handleOpenModal = () => {
@@ -27,7 +28,11 @@ const ExpenseAddFabButton: React.FC<ContainerProps> = (props) => {
         </IonFabButton>
       </IonFab>
       {/* ----------------- MODAL ----------------------*/}
-      <ExpenseAddModal isOpen={isOpen} setIsOpen={handleCloseModal} />
+      <PantryProductAddModal
+        isOpen={isOpen}
+        setIsOpen={handleCloseModal}
+        scannedID="3017620422003"
+      />
     </>
   );
 };
