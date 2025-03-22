@@ -1,0 +1,35 @@
+.container__title {
+    margin: 0;
+    padding-top: 2px;
+    padding-bottom: 4px;
+    -webkit-transform-origin: left center;
+    transform-origin: left center;
+    position: static;
+    -ms-flex-align: end;
+    align-items: flex-end;
+    min-width: 100%;
+    font-size: min(2.125rem, 61.2px);
+    font-weight: 700;
+    text-align: start;
+  }
+  .container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .container__img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+  }
+  
+  .img {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+  }
+  .container__text {
+    width: 80%;
+  }
+  
