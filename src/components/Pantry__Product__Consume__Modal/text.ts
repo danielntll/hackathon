@@ -13,7 +13,9 @@ export const text = {
       breakfast: "Colazione",
       lunch: "Pranzo",
       dinner: "Cena",
-      snack: "Snack"
+      snack: "Snack",
+      consumeAll: "Stai consumando tutto il prodotto a disposizione. Confermando, il prodotto verrà rimosso dalla tua dispensa.",
+      infoConsume: "Stai per consumare {quantity} su {propQuantity} a disposizione"
     },
     en_GB: {
         title: "Consume product",
@@ -29,7 +31,9 @@ export const text = {
       breakfast: "Breakfast",
       lunch: "Lunch",
       dinner: "Dinner",
-      snack: "Snack"
+      snack: "Snack",
+      consumeAll: "You are consuming all the product available. Confirming, the product will be removed from your pantry.",
+      infoConsume: "You are consuming {quantity} of {quantity} available"
     },
   };
   

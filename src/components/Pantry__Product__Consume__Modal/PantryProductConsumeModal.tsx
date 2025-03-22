@@ -15,6 +15,7 @@ import {
   IonNote,
   IonSelect,
   IonSelectOption,
+  IonSpinner,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -34,12 +35,13 @@ interface ContainerProps {
   setIsOpen: (isOpen: boolean) => void;
   onDidDismiss: () => void;
   quantity: number;
+  pantryProductUID: string;
 }
 
 const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
-  const { updatePantryProductQuantity } = useContextPantry();
+  const { addConsumptionEvent } = useContextPantry();
 
   //FUNCTIONS ------------------------
   function decrementQuantity() {
@@ -57,7 +59,17 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
     }
   }
 
-  function handleSave() {
+  async function handleSave() {
+    setIsSaving(true);
+    await addConsumptionEvent({
+      uid: "",
+      productUID: props.pantryProductUID,
+      quantity: quantity,
+      mealType: mealType,
+      date: date,
+    });
+
+    setIsSaving(false);
     props.setIsOpen(false);
   }
 
@@ -71,6 +83,7 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
     formatDate(new Date().toISOString())
   );
   const [mealType, setMealType] = useState<enumMealType>(enumMealType.snack);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   //USE EFFECTS ----------------------
   //RETURN COMPONENT -----------------
   return (
@@ -84,7 +97,12 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
           </IonButtons>
           <IonTitle>{text[l].title}</IonTitle>
           <IonButtons slot="end">
-            <IonButton color="success" onClick={() => props.setIsOpen(false)}>
+            <IonButton
+              color="success"
+              onClick={handleSave}
+              disabled={isSaving || quantity === 0}
+            >
+              {isSaving && <IonSpinner color={"success"} />}
               {text[l].buttonSave}
             </IonButton>
           </IonButtons>
@@ -96,7 +114,9 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
           <div className="ion-padding-top">
             <IonLabel>
               <p className="ion-padding-horizontal">
-                Stai per consumare {quantity} su {props.quantity} a disposizione
+                {text[l].infoConsume
+                  .replace("{quantity}", quantity.toString())
+                  .replace("{propQuantity}", props.quantity.toString())}
               </p>
             </IonLabel>
             <IonList inset>
@@ -153,12 +173,7 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
           </div>
           <div className="ion-padding-horizontal">
             <IonLabel>
-              {quantity === props.quantity && (
-                <p>
-                  Stai consumando tutto il prodotto a disposizione. Confermando,
-                  il prodotto verrà rimosso dalla tua dispensa.
-                </p>
-              )}
+              {quantity === props.quantity && <p>{text[l].consumeAll}</p>}
             </IonLabel>
           </div>
         </>

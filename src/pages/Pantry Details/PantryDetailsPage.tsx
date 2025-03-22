@@ -18,6 +18,7 @@ import { route__PantryDetailsPage } from "./route";
 import { typePantryProduct } from "../../types/typePantryProduct";
 import { mockPantryItemExpiring } from "../../mock/mockPantryItemExpiring";
 import PantryProductManageQuantity from "../../components/Pantry__Product__Manage__Quantity/PantryProductManageQuantity";
+import PantryProductExpireDateList from "../../components/Pantry__Product__ExpireDate__List/PantryProductExpireDateList";
 
 const PantryDetailsPage: React.FC = () => {
   //VARIABLES ------------------------
@@ -78,6 +79,12 @@ const PantryDetailsPage: React.FC = () => {
             loaded={loaded}
             pantryProductUID={pantryProduct?.uid ?? ""}
             pantryProductQuantity={pantryProduct?.quantity ?? 0}
+          />
+          <PantryProductExpireDateList
+            loaded={loaded}
+            pantryProductUID={pantryProduct?.uid ?? ""}
+            pantryProductQuantity={pantryProduct?.quantity ?? 0}
+            pantryProductExpireDate={pantryProduct?.expirationDate ?? ""}
           />
         </div>
         {/* ----------------- EXTRA UI ----------------------*/}
