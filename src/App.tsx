@@ -57,6 +57,8 @@ import { route__PantryDetailsPage } from "./pages/Pantry Details/route";
 import PantryDetailsPage from "./pages/Pantry Details/PantryDetailsPage";
 import { ContextListProvider } from "./context/contextList";
 import { ContextDataProvider } from "./context/contextData";
+import { route__StatsPage } from "./pages/Stats/route";
+import StatsPage from "./pages/Stats/Stats-Page";
 setupIonicReact();
 
 const App: React.FC = () => {
@@ -74,13 +76,16 @@ const App: React.FC = () => {
               <IonIcon aria-hidden="true" icon={homeOutline} />
               <IonLabel>{route__HomePage.tab[l]}</IonLabel>
             </IonTabButton>
+            <IonTabButton
+              tab={route__StatsPage.tab[l]}
+              href={route__StatsPage.path_base}
+            >
+              <IonIcon aria-hidden="true" icon={statsChartOutline} />
+              <IonLabel>{route__StatsPage.tab[l]}</IonLabel>
+            </IonTabButton>
             <IonTabButton tab="tab2" href="/tab2">
               <IonIcon aria-hidden="true" icon={listOutline} />
               <IonLabel>Tab 2</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="tab3" href="/tab3">
-              <IonIcon aria-hidden="true" icon={statsChartOutline} />
-              <IonLabel>Tab 3</IonLabel>
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
@@ -104,6 +109,10 @@ export const authenticatedRoutesOutlet = () => (
             {/* ---- HOME PAGE ---- */}
             <Route exact path={route__HomePage.path}>
               <Home />
+            </Route>
+            {/* ---- STATS PAGE ---- */}
+            <Route exact path={route__StatsPage.path}>
+              <StatsPage />
             </Route>
             {/* ---- PANTRY PAGE ---- */}
             {/* ----------------PANTRY DETAILS PAGE ---- */}

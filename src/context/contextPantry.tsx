@@ -67,6 +67,7 @@ export const ContextPantryProvider = ({
     deleteDocument,
     getDocumentById,
     getPaginationCollectionData,
+    getPaginationCollectionDataWithMultipleWhere,
   } = useDataContext();
   const COLLECTION_PANTRY = "pantryProducts";
   const COLLECTION_CONSUMPTION = "consumptionEvents";
@@ -200,8 +201,6 @@ export const ContextPantryProvider = ({
 
     return result.data.reduce((acc, item) => {
       const itemDate = new Date(item.createdAt.toDate());
-      console.log("itemDate", itemDate);
-      console.log("today", today);
       itemDate.setHours(0, 0, 0, 0);
 
       if (itemDate.getTime() === today.getTime()) {

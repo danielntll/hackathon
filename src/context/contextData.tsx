@@ -29,6 +29,8 @@ import { typeFirebaseDataStructure } from "../types/typeFirebaseDataStructure";
 
 type typeOfWhereClause = "==" | ">=" | "<=" | ">" | "<" | "!=";
 
+type typeWhereClause = [string, typeOfWhereClause, any];
+
 type dataContext = {
   getCollectionData: <T>(collectionPath: string) => Promise<T[] | null>;
   getPaginationCollectionData: <T>(
@@ -36,6 +38,15 @@ type dataContext = {
     perPage: number,
     startAfterDoc?: DocumentSnapshot<DocumentData>,
     whereClause?: [string, typeOfWhereClause, any]
+  ) => Promise<{
+    data: T[];
+    lastVisible?: DocumentSnapshot<DocumentData>;
+  } | null>;
+  getPaginationCollectionDataWithMultipleWhere: <T>(
+    collectionPath: string,
+    perPage: number,
+    startAfterDoc?: DocumentSnapshot<DocumentData>,
+    whereClauses?: typeWhereClause[]
   ) => Promise<{
     data: T[];
     lastVisible?: DocumentSnapshot<DocumentData>;
@@ -63,6 +74,9 @@ export const DataContext = React.createContext<dataContext>({
     return null;
   },
   getPaginationCollectionData: async () => {
+    return null;
+  },
+  getPaginationCollectionDataWithMultipleWhere: async () => {
     return null;
   },
   getDocumentById: async () => null,
@@ -121,6 +135,55 @@ export const ContextDataProvider = ({ children }: any) => {
       if (whereClause) {
         // Apply where clause if provided
         q = query(q, where(whereClause[0], whereClause[1], whereClause[2]));
+      }
+
+      if (startAfterDoc) {
+        q = query(q, startAfter(startAfterDoc));
+      }
+
+      q = query(q, limit(perPage));
+
+      const dataSnapshot = await getDocs(q);
+
+      const data: T[] = [];
+      dataSnapshot.forEach((doc) => {
+        data.push({ ...doc.data(), uid: doc.id } as T);
+      });
+
+      const lastVisible =
+        dataSnapshot.docs.length > 0
+          ? dataSnapshot.docs[dataSnapshot.docs.length - 1]
+          : undefined;
+
+      return { data, lastVisible };
+    } catch (error) {
+      console.error("Error getting collection data:", error);
+      return null;
+    }
+  }
+
+  // ---  getPaginationCollectionDataWithMultipleWhere
+  async function getPaginationCollectionDataWithMultipleWhere<T>(
+    collectionPath: string,
+    perPage: number = 10,
+    startAfterDoc?: DocumentSnapshot<DocumentData>,
+    whereClauses?: typeWhereClause[]
+  ): Promise<{
+    data: T[];
+    lastVisible?: DocumentSnapshot<DocumentData>;
+  } | null> {
+    console.log(
+      "getPaginationCollectionDataWithMultipleWhere=",
+      collectionPath
+    );
+    try {
+      let q = query(collection(db, collectionPath));
+
+      if (whereClauses && whereClauses.length > 0) {
+        // Applica tutte le clausole where
+        whereClauses.forEach((whereClause) => {
+          q = query(q, where(whereClause[0], whereClause[1], whereClause[2]));
+        });
       }
 
       if (startAfterDoc) {
@@ -307,6 +370,7 @@ export const ContextDataProvider = ({ children }: any) => {
       value={{
         getCollectionData,
         getPaginationCollectionData,
+        getPaginationCollectionDataWithMultipleWhere,
         getDocumentById,
         addDocument,
         updateDocument,
