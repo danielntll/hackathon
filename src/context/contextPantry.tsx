@@ -5,6 +5,7 @@ import { typeEvent__PantryProduct__Delete } from "../types/typeEvent__PantryProd
 import { typePantryProductInputsRequired } from "../types/type__Pantry__Product__Inputs__Required";
 import { typePantryProductPriceRecordInput } from "../types/type__Pantry__Product__Price__Record__Input";
 import { useDataContext } from "./contextData";
+import { Timestamp } from "firebase/firestore";
 
 type typeContextPantry = {
   pantryProducts: typePantryProduct[];
@@ -26,7 +27,11 @@ type typeContextPantry = {
   addPantryProductPriceRecord: (
     inputs: typePantryProductPriceRecordInput
   ) => Promise<void>;
-  addPantryProduct: (inputs: typePantryProductInputsRequired) => Promise<void>;
+  addPantryProduct: (
+    inputs: typePantryProductInputsRequired
+  ) => Promise<string | undefined>;
+  getTotalSpent: () => Promise<number>;
+  getTotalSpentByDay: (day: Date) => Promise<number>;
 };
 
 const ContextPantry = createContext<typeContextPantry>({
@@ -38,7 +43,9 @@ const ContextPantry = createContext<typeContextPantry>({
   updatePantryProductExpirationDate: () => Promise.resolve(),
   getLastPriceByProductID: () => Promise.resolve(0),
   addPantryProductPriceRecord: () => Promise.resolve(),
-  addPantryProduct: () => Promise.resolve(),
+  addPantryProduct: () => Promise.resolve(""),
+  getTotalSpent: () => Promise.resolve(0),
+  getTotalSpentByDay: () => Promise.resolve(0),
 });
 
 export const useContextPantry = () => useContext(ContextPantry);
@@ -55,6 +62,7 @@ export const ContextPantryProvider = ({
     updateDocument,
     deleteDocument,
     getDocumentById,
+    getPaginationCollectionData,
   } = useDataContext();
   const COLLECTION_PANTRY = "pantryProducts";
   const COLLECTION_CONSUMPTION = "consumptionEvents";
@@ -70,9 +78,14 @@ export const ContextPantryProvider = ({
 
   // Functions ------------------------
   async function fetchPantryProducts() {
-    const data = await getCollectionData<typePantryProduct>(COLLECTION_PANTRY);
-    if (data) {
-      setPantryProducts(data);
+    const result = await getPaginationCollectionData<typePantryProduct>(
+      COLLECTION_PANTRY,
+      100,
+      undefined,
+      ["itemCount", ">", 0]
+    );
+    if (result) {
+      setPantryProducts(result.data);
     }
   }
 
@@ -91,15 +104,19 @@ export const ContextPantryProvider = ({
     await addDocument(COLLECTION_CONSUMPTION, event);
     const product = pantryProducts.find((p) => p.uid === event.productUID);
     if (product) {
-      await updatePantryProductQuantity(
-        event.productUID,
-        (product.quantity ?? 0) - event.quantity
-      );
+      const newQuantity = (product.quantity ?? 0) - event.quantity;
+      await updatePantryProductQuantity(event.productUID, newQuantity);
+      if (newQuantity === 0) {
+        await deletePantryProduct({
+          productUID: event.productUID,
+          description: "Consumo",
+        });
+      }
     }
   }
 
   async function deletePantryProduct(event: typeEvent__PantryProduct__Delete) {
-    await deleteDocument(COLLECTION_PANTRY, event.productUID);
+    await updateDocument(COLLECTION_PANTRY, event.productUID, { itemCount: 0 });
     setPantryProducts((prev) =>
       prev.filter((product) => product.uid !== event.productUID)
     );
@@ -132,11 +149,62 @@ export const ContextPantryProvider = ({
   }
 
   async function getLastPriceByProductID(productID: string) {
-    const prices = await getCollectionData<{ price: number }>(
-      COLLECTION_PRICES
-    );
-    if (!prices || prices.length === 0) return 0;
-    return prices[prices.length - 1].price;
+    const result = await getPaginationCollectionData<{
+      price: number;
+      openFoodProductID: string;
+      createdAt: string;
+      byUserUID: string;
+    }>(COLLECTION_PRICES, 100, undefined, ["byUserUID", "==", "123"]);
+
+    if (!result || result.data.length === 0) return 0;
+
+    const filteredData = result.data
+      .filter((item) => item.openFoodProductID === productID)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+    if (filteredData.length === 0) return 0;
+
+    return filteredData[0].price;
+  }
+
+  async function getTotalSpent() {
+    const result = await getPaginationCollectionData<{
+      price: number;
+      openFoodProductID: string;
+      createdAt: string;
+      byUserUID: string;
+    }>(COLLECTION_PRICES, 100, undefined, ["byUserUID", "==", "123"]);
+
+    if (!result || result.data.length === 0) return 0;
+
+    return result.data.reduce((acc, item) => acc + item.price, 0);
+  }
+
+  async function getTotalSpentByDay(today: Date) {
+    const result = await getPaginationCollectionData<{
+      price: number;
+      openFoodProductID: string;
+      createdAt: Timestamp;
+      byUserUID: string;
+    }>(COLLECTION_PRICES, 100, undefined, ["byUserUID", "==", "123"]);
+
+    if (!result || result.data.length === 0) return 0;
+    today.setHours(0, 0, 0, 0);
+
+    return result.data.reduce((acc, item) => {
+      const itemDate = new Date(item.createdAt.toDate());
+      console.log("itemDate", itemDate);
+      console.log("today", today);
+      itemDate.setHours(0, 0, 0, 0);
+
+      if (itemDate.getTime() === today.getTime()) {
+        return acc + item.price;
+      }
+      return acc;
+    }, 0);
   }
 
   async function addPantryProductPriceRecord(
@@ -154,8 +222,11 @@ export const ContextPantryProvider = ({
     );
     if (newProduct) {
       setPantryProducts((prev) => [...prev, newProduct]);
+      return newProduct.uid;
     }
+    return undefined;
   }
+
   function removeUndefinedFields<T extends object>(obj: T): Partial<T> {
     const cleanObj = { ...obj };
     Object.keys(cleanObj).forEach((key) => {
@@ -178,6 +249,8 @@ export const ContextPantryProvider = ({
         getLastPriceByProductID,
         addPantryProductPriceRecord,
         addPantryProduct,
+        getTotalSpent,
+        getTotalSpentByDay,
       }}
     >
       {children}

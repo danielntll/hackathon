@@ -1,6 +1,6 @@
 export type typePantryProductPriceRecordInput = {
   openFoodProductID?: string;
   price: number;
-  date: string;
+  productUID?: string;
   supermarket?: string;
 };

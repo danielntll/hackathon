@@ -22,9 +22,7 @@ const ExpenseAddFabButton: React.FC<ContainerProps> = (props) => {
   function getScannedID() {
     setScannedID("9002490100070");
   }
-  function handleOpenModal() {
-    setIsOpen(true);
-  }
+
   function handleCloseModal() {
     setIsOpen(false);
     setScannedID(undefined);

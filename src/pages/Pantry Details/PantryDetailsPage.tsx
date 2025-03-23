@@ -3,7 +3,10 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonItem,
   IonLabel,
+  IonList,
+  IonNote,
   IonPage,
   IonSegment,
   IonSegmentButton,
@@ -103,17 +106,21 @@ const PantryDetailsPage: React.FC = () => {
         <IonSegmentView>
           <IonSegmentContent id="dispensa">
             <div>
+              <IonList inset>
+                <IonItem color="light">
+                  <IonLabel>
+                    <h2>Prezzo acquisto</h2>
+                  </IonLabel>
+                  <IonNote>{pantryProduct?.pricePerItem} €</IonNote>
+                </IonItem>
+              </IonList>
               <PantryProductExpireDateList
                 loaded={loaded}
                 pantryProductUID={pantryProduct?.uid ?? ""}
-                pantryProductQuantity={pantryProduct?.quantity ?? 0}
-                pantryProductExpireDate={pantryProduct?.expirationDate ?? ""}
               />
               <PantryProductManageQuantity
                 loaded={loaded}
                 pantryProductUID={pantryProduct?.uid ?? ""}
-                pantryProductQuantity={pantryProduct?.quantity ?? 0}
-                pantryProductUnit={pantryProduct?.unit ?? ""}
               />
             </div>
           </IonSegmentContent>

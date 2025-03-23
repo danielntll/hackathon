@@ -15,28 +15,36 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { typeExpirationData } from "../../types/typeExpirationData";
 import PantryProductExpireDateUpdateModal from "../Pantry__Product__ExpireDate__Update__Modal/PantryProductExpireDateUpdateModal";
-
+import { typePantryProduct } from "../../types/type__Pantry__Product";
+import { useContextPantry } from "../../context/contextPantry";
 interface ContainerProps {
   loaded: boolean;
   pantryProductUID: string;
-  pantryProductQuantity: number;
-  pantryProductExpireDate: string;
 }
 
 const PantryProductExpireDateList: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
+  const { pantryProducts } = useContextPantry();
   //USE STATES -----------------------
   const [expirationData, setExpirationData] = useState<typeExpirationData>({
-    days: 0,
+    days: undefined,
     color: "primary",
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [pantryProduct, setPantryProduct] = useState<
+    typePantryProduct | undefined
+  >(undefined);
   //USE EFFECTS ----------------------
+
   useEffect(() => {
-    const expirationData = daysUntilExpiration(props.pantryProductExpireDate);
+    const pantryProduct = pantryProducts.find(
+      (pantryProduct) => pantryProduct.uid === props.pantryProductUID
+    );
+    const expirationData = daysUntilExpiration(pantryProduct?.expirationDate);
     setExpirationData(expirationData);
-  }, [props.pantryProductExpireDate]);
+    setPantryProduct(pantryProduct);
+  }, [pantryProducts, props.pantryProductUID]);
   //FUNCTIONS ------------------------
   //RETURN COMPONENT -----------------
   return (
@@ -47,7 +55,7 @@ const PantryProductExpireDateList: React.FC<ContainerProps> = (props) => {
             {text[l].title}
             <IonText color={"medium"}>
               {props.loaded ? (
-                <p>{props.pantryProductExpireDate}</p>
+                <p>{pantryProduct?.expirationDate}</p>
               ) : (
                 <IonSkeletonText
                   animated={true}
@@ -57,9 +65,11 @@ const PantryProductExpireDateList: React.FC<ContainerProps> = (props) => {
             </IonText>
           </IonLabel>
           {props.loaded ? (
-            <IonBadge color={expirationData.color}>
-              {expirationData.days} {text[l].days}
-            </IonBadge>
+            expirationData.days !== undefined && (
+              <IonBadge color={expirationData.color}>
+                {expirationData.days} {text[l].days}
+              </IonBadge>
+            )
           ) : (
             <IonSkeletonText
               animated={true}
@@ -85,7 +95,7 @@ const PantryProductExpireDateList: React.FC<ContainerProps> = (props) => {
         setIsOpen={setIsOpen}
         onDidDismiss={() => setIsOpen(false)}
         productId={props.pantryProductUID}
-        currentExpirationDate={props.pantryProductExpireDate}
+        currentExpirationDate={pantryProduct?.expirationDate ?? ""}
       />
     </>
   );

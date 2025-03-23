@@ -14,6 +14,7 @@ import "./PantryProductExpireDateUpdateModal.module.css";
 import { text } from "./text";
 import { useState } from "react";
 import { useContextPantry } from "../../context/contextPantry";
+import { format, formatDate, parseISO } from "date-fns";
 
 interface ContainerProps {
   isOpen: boolean;
@@ -37,6 +38,9 @@ const PantryProductExpireDateUpdateModal: React.FC<ContainerProps> = (
   );
 
   //FUNCTIONS ------------------------
+  function formatDate(value: string): string {
+    return format(parseISO(value), "dd MMM yyyy");
+  }
   const handleSave = async () => {
     try {
       setIsUpdating(true);
@@ -88,10 +92,12 @@ const PantryProductExpireDateUpdateModal: React.FC<ContainerProps> = (
           id="datetime"
           presentation="date"
           value={expirationDate}
-          onIonChange={(e) =>
-            setExpirationDate(e.detail.value?.toString() || "")
-          }
-          min={new Date().toISOString()}
+          onIonChange={(ev) => {
+            const value = Array.isArray(ev.detail.value)
+              ? ev.detail.value[0]
+              : ev.detail.value;
+            setExpirationDate(formatDate(value!));
+          }}
           locale={l === "it_IT" ? "it-IT" : "en-GB"}
         ></IonDatetime>
       </IonContent>

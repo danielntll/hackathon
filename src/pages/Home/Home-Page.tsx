@@ -13,6 +13,7 @@ import { text } from "./text";
 import ExpenseAddFabButton from "../../components/Expense__Add__Fab__Button/ExpenseAddFabButton";
 import { route__HomePage } from "./route";
 import PantryListExpiring from "../../components/Pantry__List__Expiring/PantryListExpiring";
+import ExpensesOverviewList from "../../components/Expenses__Overview__List/ExpensesOverviewList";
 
 const Home: React.FC = () => {
   //VARIABLES ------------------------
@@ -39,6 +40,7 @@ const Home: React.FC = () => {
         </IonHeader>
         {/* ----------------- PAGE CONTENT ------------------*/}
         <div className={styles.content}>
+          <ExpensesOverviewList />
           <PantryListExpiring />
         </div>
         {/* ----------------- EXTRA UI ----------------------*/}

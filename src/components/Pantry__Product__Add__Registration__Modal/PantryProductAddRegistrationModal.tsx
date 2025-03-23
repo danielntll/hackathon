@@ -55,16 +55,22 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
       listUID: selectedListUID,
     };
 
-    await addPantryProduct(inputs);
+    const productUID = await addPantryProduct(inputs);
+
+    if (pricePerItem) {
+      await addPriceRecord(productUID);
+    }
+
     setUploading(false);
   }
-  async function addPriceRecord() {
+
+  async function addPriceRecord(productUID?: string) {
     setPriceRecordUploading(true);
 
     const inputs: typePantryProductPriceRecordInput = {
       openFoodProductID: props.scannedID,
       price: pricePerItem ?? 0,
-      date: new Date().toISOString(),
+      productUID,
     };
     await addPantryProductPriceRecord(inputs);
     setPriceRecordUploading(false);
@@ -126,7 +132,7 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
             disabled={
               priceRecordUploading || !pricePerItem || pricePerItem === 0
             }
-            onClick={addPriceRecord}
+            onClick={() => addPriceRecord()}
             fill="clear"
           >
             <IonLabel>{text[l].addPriceRecord}</IonLabel>

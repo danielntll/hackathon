@@ -37,6 +37,7 @@ interface ContainerProps {
   quantity: number;
   pantryProductUID: string;
   pantryProductUnit: string;
+  openFoodProductID: string;
 }
 
 const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
@@ -65,6 +66,7 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
     await addPantryProductConsumptionEvent({
       uid: "",
       productUID: props.pantryProductUID,
+      openFoodProductID: props.openFoodProductID,
       quantity: quantity,
       mealType: mealType,
       date: date,
@@ -129,7 +131,7 @@ const PantryProductConsumeModal: React.FC<ContainerProps> = (props) => {
                   type="number"
                   labelPlacement="stacked"
                   value={quantity.toString()}
-                  onIonChange={(e) => handleQuantityChange(e.detail.value!)}
+                  onIonInput={(e) => handleQuantityChange(e.detail.value!)}
                   placeholder={text[l].quantity}
                 ></IonInput>
                 <IonButton

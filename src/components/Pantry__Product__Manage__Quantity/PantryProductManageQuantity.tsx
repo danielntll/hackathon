@@ -13,40 +13,56 @@ import "./PantryProductManageQuantity.module.css";
 import { text } from "./text";
 import { restaurantOutline } from "ionicons/icons";
 import PantryProductConsumeModal from "../Pantry__Product__Consume__Modal/PantryProductConsumeModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PantryProductDeleteModal from "../Pantry__Product__Delete__Modal/PantryProductDeleteModal";
-
+import { typePantryProduct } from "../../types/type__Pantry__Product";
+import { useContextPantry } from "../../context/contextPantry";
 interface ContainerProps {
   pantryProductUID: string;
-  pantryProductQuantity: number;
-  pantryProductUnit: string;
   loaded: boolean;
 }
 
 const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
+  const { pantryProducts } = useContextPantry();
   //USE STATES -----------------------
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+  const [pantryProduct, setPantryProduct] = useState<
+    typePantryProduct | undefined
+  >(undefined);
   //USE EFFECTS ----------------------
+  useEffect(() => {
+    const fetchPantryProduct = async () => {
+      const pantryProduct = pantryProducts.find(
+        (pantryProduct) => pantryProduct.uid === props.pantryProductUID
+      );
+      setPantryProduct(pantryProduct);
+    };
+    fetchPantryProduct();
+  }, [props.pantryProductUID, pantryProducts]);
   //FUNCTIONS ------------------------
   //RETURN COMPONENT -----------------
   return (
     <>
       <IonList inset>
         <IonItem color={"light"}>
+          <IonLabel>{text[l].pieces}</IonLabel>
+          <IonNote>{pantryProduct?.itemCount}</IonNote>
+        </IonItem>
+        <IonItem color={"light"}>
           <IonLabel>
             {text[l].quantity}
             <IonText color={"medium"}>
               <p>
-                {text[l].unit}: {props.pantryProductUnit}
+                {text[l].unit}: {pantryProduct?.unit}
               </p>
             </IonText>
           </IonLabel>
-          <IonNote className="ion-margin-end">
+          <IonNote>
             {props.loaded ? (
-              props.pantryProductQuantity
+              pantryProduct?.quantity
             ) : (
               <IonSkeletonText
                 animated={true}
@@ -60,7 +76,11 @@ const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
             slot="start"
             fill="clear"
             color="danger"
-            disabled={props.pantryProductQuantity === 0 || !props.loaded}
+            disabled={
+              pantryProduct?.quantity === 0 ||
+              !props.loaded ||
+              pantryProduct === undefined
+            }
             onClick={() => setIsOpenDelete(true)}
           >
             {text[l].delete}
@@ -68,7 +88,11 @@ const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
           <IonButton
             slot="end"
             fill="clear"
-            disabled={props.pantryProductQuantity === 0 || !props.loaded}
+            disabled={
+              pantryProduct?.quantity === 0 ||
+              !props.loaded ||
+              pantryProduct === undefined
+            }
             color="primary"
             onClick={() => setIsOpen(true)}
           >
@@ -83,11 +107,12 @@ const PantryProductManageQuantity: React.FC<ContainerProps> = (props) => {
 
       {/* ----------------- MODAL ----------------------*/}
       <PantryProductConsumeModal
-        pantryProductUnit={props.pantryProductUnit}
+        openFoodProductID={pantryProduct?.openFoodProductID ?? ""}
+        pantryProductUnit={pantryProduct?.unit ?? ""}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         onDidDismiss={() => setIsOpen(false)}
-        quantity={props.pantryProductQuantity}
+        quantity={pantryProduct?.quantity ?? 0}
         pantryProductUID={props.pantryProductUID}
       />
       <PantryProductDeleteModal

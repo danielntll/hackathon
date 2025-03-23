@@ -27,13 +27,15 @@ import {
 } from "firebase/storage";
 import { typeFirebaseDataStructure } from "../types/typeFirebaseDataStructure";
 
+type typeOfWhereClause = "==" | ">=" | "<=" | ">" | "<" | "!=";
+
 type dataContext = {
   getCollectionData: <T>(collectionPath: string) => Promise<T[] | null>;
   getPaginationCollectionData: <T>(
     collectionPath: string,
     perPage: number,
     startAfterDoc?: DocumentSnapshot<DocumentData>,
-    whereClause?: [string, "==", any]
+    whereClause?: [string, typeOfWhereClause, any]
   ) => Promise<{
     data: T[];
     lastVisible?: DocumentSnapshot<DocumentData>;
@@ -107,7 +109,7 @@ export const ContextDataProvider = ({ children }: any) => {
     collectionPath: string,
     perPage: number = 10,
     startAfterDoc?: DocumentSnapshot<DocumentData>,
-    whereClause?: [string, "==", any]
+    whereClause?: [string, typeOfWhereClause, any]
   ): Promise<{
     data: T[];
     lastVisible?: DocumentSnapshot<DocumentData>;
