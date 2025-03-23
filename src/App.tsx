@@ -83,10 +83,6 @@ const App: React.FC = () => {
               <IonIcon aria-hidden="true" icon={statsChartOutline} />
               <IonLabel>{route__StatsPage.tab[l]}</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="tab2" href="/tab2">
-              <IonIcon aria-hidden="true" icon={listOutline} />
-              <IonLabel>Tab 2</IonLabel>
-            </IonTabButton>
           </IonTabBar>
         </IonTabs>
       </IonReactRouter>
