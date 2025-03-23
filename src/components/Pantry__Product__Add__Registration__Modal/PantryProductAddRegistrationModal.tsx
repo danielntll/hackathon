@@ -23,7 +23,8 @@ import PantryProductPricePerItemInput from "../Pantry__Product__PricePerItem__In
 import { add, cashOutline } from "ionicons/icons";
 import PantryProductStatsLastPriceItem from "../Pantry__Product__Stats__LastPrice__Item/PantryProductStatsLastPriceItem";
 import { useContextPantry } from "../../context/contextPantry";
-import { formatDate } from "date-fns";
+import { format, parseISO } from "date-fns";
+import ListSelectOrCreateInput from "../List__Select__Or__Create__Input/ListSelectOrCreateInput";
 interface ContainerProps {
   quantityUnitInfo?: typeOpenFoodQuantityUnitInfo;
   loaded: boolean;
@@ -34,28 +35,11 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
   const { addPantryProductPriceRecord, addPantryProduct } = useContextPantry();
-  //USE STATES -----------------------
-  const [itemCount, setItemCount] = useState<number>(1);
-  const [quantity, setQuantity] = useState<number | undefined>(undefined);
-  const [unit, setUnit] = useState<enumPantryUnit>(enumPantryUnit.g);
-  const [pricePerItem, setPricePerItem] = useState<number | undefined>(
-    undefined
-  );
-
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [priceRecordUploading, setPriceRecordUploading] =
-    useState<boolean>(false);
-  const [expirationDate, setExpirationDate] = useState<string | undefined>(
-    undefined
-  );
-  //USE EFFECTS ----------------------
-  useEffect(() => {
-    if (props.quantityUnitInfo) {
-      setQuantity(parseInt(props.quantityUnitInfo.product_quantity));
-      setUnit(props.quantityUnitInfo.product_quantity_unit);
-    }
-  }, [props.quantityUnitInfo]);
   //FUNCTIONS ------------------------
+
+  function formatDate(value: string): string {
+    return format(parseISO(value), "MMM dd yyyy");
+  }
   async function addProduct() {
     setUploading(true);
     await addPantryProduct(
@@ -63,7 +47,8 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
       itemCount,
       quantity,
       unit,
-      pricePerItem
+      pricePerItem,
+      date
     );
     setUploading(false);
   }
@@ -76,6 +61,29 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
     );
     setPriceRecordUploading(false);
   }
+  //USE STATES -----------------------
+  const [itemCount, setItemCount] = useState<number>(1);
+  const [quantity, setQuantity] = useState<number | undefined>(undefined);
+  const [unit, setUnit] = useState<enumPantryUnit>(enumPantryUnit.g);
+  const [pricePerItem, setPricePerItem] = useState<number | undefined>(
+    undefined
+  );
+
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [priceRecordUploading, setPriceRecordUploading] =
+    useState<boolean>(false);
+  const [date, setDate] = useState<string | undefined>(undefined);
+  const [selectedListUID, setSelectedListUID] = useState<string | undefined>(
+    undefined
+  );
+  //USE EFFECTS ----------------------
+  useEffect(() => {
+    if (props.quantityUnitInfo) {
+      setQuantity(parseInt(props.quantityUnitInfo.product_quantity));
+      setUnit(props.quantityUnitInfo.product_quantity_unit);
+    }
+  }, [props.quantityUnitInfo]);
+
   //RETURN COMPONENT -----------------
   return (
     <div>
@@ -114,31 +122,36 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
         </IonLabel>
       </div>
 
-      <div>
-        <IonList inset>
-          <IonAccordionGroup value="start">
-            <IonAccordion value="start">
-              <IonItem slot="header">
-                <IonLabel>{text[l].expirationDate}</IonLabel>
-                <IonNote slot="end" id="start-date">
-                  {expirationDate}
-                </IonNote>
-              </IonItem>
-              <IonDatetime
-                id="start-date"
-                slot="content"
-                presentation="date"
-                value={expirationDate}
-                onIonChange={(e) =>
-                  setExpirationDate(e.detail.value?.toString() || "")
-                }
-                min={new Date().toISOString()}
-                locale={l === "it_IT" ? "it-IT" : "en-GB"}
-              ></IonDatetime>
-            </IonAccordion>
-          </IonAccordionGroup>
-        </IonList>
-      </div>
+      <IonList inset>
+        <IonAccordionGroup>
+          <IonAccordion value="data">
+            <IonItem slot="header">
+              <IonLabel>{text[l].expirationDate}</IonLabel>
+              <IonNote slot="end" className="ion-margin-end" id="start-date">
+                {date}
+              </IonNote>
+            </IonItem>
+            <IonDatetime
+              slot="content"
+              presentation="date"
+              id="datetime-start"
+              onIonChange={(ev) => {
+                const value = Array.isArray(ev.detail.value)
+                  ? ev.detail.value[0]
+                  : ev.detail.value;
+                setDate(formatDate(value!));
+              }}
+              min={new Date().toISOString()}
+              locale={l === "it_IT" ? "it-IT" : "en-GB"}
+            ></IonDatetime>
+          </IonAccordion>
+        </IonAccordionGroup>
+      </IonList>
+
+      <ListSelectOrCreateInput
+        selectedList={selectedListUID}
+        setSelectedList={setSelectedListUID}
+      />
 
       <div className="ion-padding">
         <IonButton

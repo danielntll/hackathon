@@ -31,7 +31,8 @@ type typeContextPantry = {
     itemCount: number,
     quantity: number | undefined,
     unit: string,
-    pricePerItem: number | undefined
+    pricePerItem: number | undefined,
+    date: string | undefined
   ) => Promise<void>;
 };
 
@@ -116,10 +117,11 @@ export const ContextPantryProvider = ({
     itemCount: number,
     quantity: number | undefined,
     unit: string,
-    pricePerItem: number | undefined
+    pricePerItem: number | undefined,
+    date: string | undefined
   ) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log(productID, itemCount, quantity, unit, pricePerItem);
+    console.log(productID, itemCount, quantity, unit, pricePerItem, date);
   }
   // Return ---------------------------
   return (

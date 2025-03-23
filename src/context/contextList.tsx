@@ -1,8 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { typeList } from "../types/typeList";
-type typeContextList = {};
+type typeContextList = {
+  lists: typeList[];
+};
 
-const ContextList = createContext<typeContextList>({});
+const ContextList = createContext<typeContextList>({
+  lists: [],
+});
 
 export const useContextList = () => useContext(ContextList);
 
@@ -13,7 +17,7 @@ export const ContextListProvider = ({
 }) => {
   // Variables ------------------------
   // UseStates ------------------------
-  const [list, setList] = useState<typeList[]>([]);
+  const [lists, setLists] = useState<typeList[]>([]);
   // UseEffects -----------------------
   useEffect(() => {
     fetchList();
@@ -21,8 +25,10 @@ export const ContextListProvider = ({
   // Functions ------------------------
   async function fetchList() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    setList(list);
+    setLists(lists);
   }
   // Return ---------------------------
-  return <ContextList.Provider value={{}}>{children}</ContextList.Provider>;
+  return (
+    <ContextList.Provider value={{ lists }}>{children}</ContextList.Provider>
+  );
 };
