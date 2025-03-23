@@ -10,6 +10,8 @@ export const text = {
     addPriceRecord: "Registra solo prezzo",
     addToList: "Aggiungi a lista della spesa",
     expirationDate: "Data di scadenza",
+    listInputInfo:
+      "Seleziona la lista in cui vuoi aggiungere il prodotto. Se il prodotto è già presente nella lista sarà spuntato.",
   },
   en_GB: {
     title: "Base",
@@ -22,5 +24,7 @@ export const text = {
     addPriceRecord: "Register price only",
     addToList: "Add to shopping list",
     expirationDate: "Expiration date",
+    listInputInfo:
+      "Select the list in which you want to add the product. If the product is already in the list, it will be checked.",
   },
 };

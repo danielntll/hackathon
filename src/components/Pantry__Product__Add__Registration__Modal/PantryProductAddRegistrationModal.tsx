@@ -20,7 +20,7 @@ import { enumPantryUnit } from "../../enums/enumPantryUnit";
 import { typeOpenFoodQuantityUnitInfo } from "../../types/typeOpenFoodBasicInfo";
 import PantryProductItemCountInput from "../Pantry__Product__ItemCount__Input/PantryProductItemCountInput";
 import PantryProductPricePerItemInput from "../Pantry__Product__PricePerItem__Input/PantryProductPricePerItemInput";
-import { add, cashOutline } from "ionicons/icons";
+import { add, cashOutline, checkmarkOutline } from "ionicons/icons";
 import PantryProductStatsLastPriceItem from "../Pantry__Product__Stats__LastPrice__Item/PantryProductStatsLastPriceItem";
 import { useContextPantry } from "../../context/contextPantry";
 import { format, parseISO } from "date-fns";
@@ -148,10 +148,18 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
         </IonAccordionGroup>
       </IonList>
 
-      <ListSelectOrCreateInput
-        selectedList={selectedListUID}
-        setSelectedList={setSelectedListUID}
-      />
+      <>
+        <ListSelectOrCreateInput
+          selectedList={selectedListUID}
+          setSelectedList={setSelectedListUID}
+        />
+        <IonLabel>
+          <p className="ion-padding-horizontal">
+            {text[l].listInputInfo}
+            <IonIcon color="primary" icon={checkmarkOutline} />
+          </p>
+        </IonLabel>
+      </>
 
       <div className="ion-padding">
         <IonButton

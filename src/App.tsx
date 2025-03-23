@@ -55,6 +55,7 @@ import { ContextPantryProvider } from "./context/contextPantry";
 import { route__HomePage } from "./pages/Home/route";
 import { route__PantryDetailsPage } from "./pages/Pantry Details/route";
 import PantryDetailsPage from "./pages/Pantry Details/PantryDetailsPage";
+import { ContextListProvider } from "./context/contextList";
 setupIonicReact();
 
 const App: React.FC = () => {
@@ -91,22 +92,24 @@ export default App;
 
 export const authenticatedRoutesOutlet = () => (
   <ContextLanguageProvider>
-    <ContextPantryProvider>
-      <IonRouterOutlet>
-        {/* ---- DEFAULT REDIRECT ----  */}
-        <Route exact path="/">
-          <Redirect to={route__HomePage.path} />
-        </Route>
-        {/* ---- HOME PAGE ---- */}
-        <Route exact path={route__HomePage.path}>
-          <Home />
-        </Route>
-        {/* ---- PANTRY PAGE ---- */}
-        {/* ----------------PANTRY DETAILS PAGE ---- */}
-        <Route exact path={route__PantryDetailsPage.path}>
-          <PantryDetailsPage />
-        </Route>
-      </IonRouterOutlet>
-    </ContextPantryProvider>
+    <ContextListProvider>
+      <ContextPantryProvider>
+        <IonRouterOutlet>
+          {/* ---- DEFAULT REDIRECT ----  */}
+          <Route exact path="/">
+            <Redirect to={route__HomePage.path} />
+          </Route>
+          {/* ---- HOME PAGE ---- */}
+          <Route exact path={route__HomePage.path}>
+            <Home />
+          </Route>
+          {/* ---- PANTRY PAGE ---- */}
+          {/* ----------------PANTRY DETAILS PAGE ---- */}
+          <Route exact path={route__PantryDetailsPage.path}>
+            <PantryDetailsPage />
+          </Route>
+        </IonRouterOutlet>
+      </ContextPantryProvider>
+    </ContextListProvider>
   </ContextLanguageProvider>
 );

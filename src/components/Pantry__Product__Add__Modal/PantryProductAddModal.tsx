@@ -6,7 +6,6 @@ import {
   IonSegmentButton,
   IonSegmentContent,
   IonSegmentView,
-  IonSpinner,
   IonTitle,
 } from "@ionic/react";
 import { IonButtons } from "@ionic/react";
@@ -26,7 +25,6 @@ import {
   typeOpenFoodQuantityUnitInfo,
 } from "../../types/typeOpenFoodBasicInfo";
 import PantryProductAddRegistrationModal from "../Pantry__Product__Add__Registration__Modal/PantryProductAddRegistrationModal";
-
 interface ContainerProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -37,7 +35,6 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
   //USE STATES -----------------------
-  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [basicInfo, setBasicInfo] = useState<typeOpenFoodBasicInfo | undefined>(
     undefined
@@ -71,7 +68,6 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
   };
 
   const handleClose = () => {
-    setIsSaving(false);
     setLoaded(false);
     setBasicInfo(undefined);
     setQuantityUnitInfo(undefined);
