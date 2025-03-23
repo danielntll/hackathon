@@ -76,7 +76,12 @@ export const getProductNutriScore = async (
   try {
     const response = await fetch(productNutriScoreApiUrl);
     const data = await response.json();
-    return {};
+    console.log(data);
+    const nutriScore: typeOpenFoodNutriScore = {
+      nutri_score: data.product.nutriscore_data.grade,
+      nutri_score_data: data.product.nutriscore_data.components,
+    };
+    return nutriScore;
   } catch (error) {
     console.error("Error fetching data from OpenFoodFacts:", error);
     throw error;
