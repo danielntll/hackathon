@@ -1,4 +1,4 @@
 export type typeExpirationData = {
-  days: number;
+  days: number | undefined;
   color: string;
 };

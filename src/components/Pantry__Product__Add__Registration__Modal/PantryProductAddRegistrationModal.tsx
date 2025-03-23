@@ -25,6 +25,8 @@ import PantryProductStatsLastPriceItem from "../Pantry__Product__Stats__LastPric
 import { useContextPantry } from "../../context/contextPantry";
 import { format, parseISO } from "date-fns";
 import ListSelectOrCreateInput from "../List__Select__Or__Create__Input/ListSelectOrCreateInput";
+import { typePantryProductPriceRecordInput } from "../../types/type__Pantry__Product__Price__Record__Input";
+import { typePantryProductInputsRequired } from "../../types/type__Pantry__Product__Inputs__Required";
 interface ContainerProps {
   quantityUnitInfo?: typeOpenFoodQuantityUnitInfo;
   loaded: boolean;
@@ -42,24 +44,29 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
   }
   async function addProduct() {
     setUploading(true);
-    await addPantryProduct({
-      productID: props.scannedID,
+
+    const inputs: typePantryProductInputsRequired = {
+      openFoodProductID: props.scannedID,
       itemCount,
       quantity,
       unit,
       pricePerItem,
-      date,
+      expirationDate: date,
       listUID: selectedListUID,
-    });
+    };
+
+    await addPantryProduct(inputs);
     setUploading(false);
   }
   async function addPriceRecord() {
     setPriceRecordUploading(true);
-    await addPantryProductPriceRecord(
-      props.scannedID,
-      pricePerItem ?? 0,
-      new Date().toISOString()
-    );
+
+    const inputs: typePantryProductPriceRecordInput = {
+      openFoodProductID: props.scannedID,
+      price: pricePerItem ?? 0,
+      date: new Date().toISOString(),
+    };
+    await addPantryProductPriceRecord(inputs);
     setPriceRecordUploading(false);
   }
   //USE STATES -----------------------

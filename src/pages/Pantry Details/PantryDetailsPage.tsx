@@ -20,10 +20,12 @@ import { useEffect, useState } from "react";
 import { route__HomePage } from "../Home/route";
 import PantryProductBaseInfo from "../../components/Pantry__Product__Base__Info/PantryProductBaseInfo";
 import { route__PantryDetailsPage } from "./route";
-import { typePantryProduct } from "../../types/typePantryProduct";
+import { typePantryProduct } from "../../types/type__Pantry__Product";
 import PantryProductManageQuantity from "../../components/Pantry__Product__Manage__Quantity/PantryProductManageQuantity";
 import PantryProductExpireDateList from "../../components/Pantry__Product__ExpireDate__List/PantryProductExpireDateList";
 import { useContextPantry } from "../../context/contextPantry";
+import { typeOpenFoodBasicInfo } from "../../types/typeOpenFoodBasicInfo";
+import { getBasicProductInfo } from "../../utils/openFoodApis";
 const PantryDetailsPage: React.FC = () => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
@@ -32,6 +34,10 @@ const PantryDetailsPage: React.FC = () => {
   //USE STATES -----------------------
   const [pantryProduct, setPantryProduct] = useState<
     typePantryProduct | undefined
+  >(undefined);
+
+  const [openFoodProductBasicInfo, setOpenFoodProductBasicInfo] = useState<
+    typeOpenFoodBasicInfo | undefined
   >(undefined);
   const [loaded, setLoaded] = useState<boolean>(false);
   //USE EFFECTS ----------------------
@@ -45,8 +51,13 @@ const PantryDetailsPage: React.FC = () => {
     setLoaded(false);
     const pantryProduct = await getPantryProductByUID(pantryProductID);
     setPantryProduct(pantryProduct);
+    const openFoodProductBasicInfo = await getBasicProductInfo(
+      pantryProduct?.openFoodProductID ?? ""
+    );
+    setOpenFoodProductBasicInfo(openFoodProductBasicInfo);
     setLoaded(true);
   }
+
   //RETURN COMPONENT -----------------
   return (
     <IonPage>
@@ -73,9 +84,9 @@ const PantryDetailsPage: React.FC = () => {
         <div className={styles.content}>
           <PantryProductBaseInfo
             loaded={loaded}
-            subtitle={pantryProduct?.brand ?? ""}
-            title={pantryProduct?.name ?? ""}
-            imageUrl={pantryProduct?.image ?? ""}
+            subtitle={openFoodProductBasicInfo?.brands_tags.join(", ") ?? ""}
+            title={openFoodProductBasicInfo?.name ?? ""}
+            imageUrl={openFoodProductBasicInfo?.image_url ?? ""}
           />
         </div>
         <div className="ion-padding">

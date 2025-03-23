@@ -3,7 +3,7 @@ import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryListExpiring.module.css";
 import { text } from "./text";
 import PantryItemExpiring from "../Pantry__Item__Expiring/PantryItemExpiring";
-import { typePantryProduct } from "../../types/typePantryProduct";
+import { typePantryProduct } from "../../types/type__Pantry__Product";
 import { useContextPantry } from "../../context/contextPantry";
 interface ContainerProps {}
 

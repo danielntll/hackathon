@@ -1,9 +1,9 @@
-export type typePantryProductInputsRequired = {
-  productID: string;
+export interface typePantryProductInputsRequired {
+  openFoodProductID?: string;
   itemCount: number;
   quantity: number | undefined;
   unit: string;
   pricePerItem: number | undefined;
-  date: string | undefined;
+  expirationDate: string | undefined;
   listUID?: string;
-};
+}
