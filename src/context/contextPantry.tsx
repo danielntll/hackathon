@@ -32,6 +32,9 @@ type typeContextPantry = {
   ) => Promise<string | undefined>;
   getTotalSpent: () => Promise<number>;
   getTotalSpentByDay: (day: Date) => Promise<number>;
+  getConsumptionEventsByProductID: (
+    productID: string
+  ) => Promise<typeEvent__PantryProduct__Consumption[]>;
 };
 
 const ContextPantry = createContext<typeContextPantry>({
@@ -46,6 +49,7 @@ const ContextPantry = createContext<typeContextPantry>({
   addPantryProduct: () => Promise.resolve(""),
   getTotalSpent: () => Promise.resolve(0),
   getTotalSpentByDay: () => Promise.resolve(0),
+  getConsumptionEventsByProductID: () => Promise.resolve([]),
 });
 
 export const useContextPantry = () => useContext(ContextPantry);
@@ -207,6 +211,18 @@ export const ContextPantryProvider = ({
     }, 0);
   }
 
+  async function getConsumptionEventsByProductID(productID: string) {
+    const result =
+      await getPaginationCollectionData<typeEvent__PantryProduct__Consumption>(
+        COLLECTION_CONSUMPTION,
+        100,
+        undefined,
+        ["productUID", "==", productID]
+      );
+    console.log("result", result);
+    return result?.data || [];
+  }
+
   async function addPantryProductPriceRecord(
     inputs: typePantryProductPriceRecordInput
   ) {
@@ -251,6 +267,7 @@ export const ContextPantryProvider = ({
         addPantryProduct,
         getTotalSpent,
         getTotalSpentByDay,
+        getConsumptionEventsByProductID,
       }}
     >
       {children}

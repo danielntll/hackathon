@@ -29,6 +29,7 @@ import PantryProductExpireDateList from "../../components/Pantry__Product__Expir
 import { useContextPantry } from "../../context/contextPantry";
 import { typeOpenFoodBasicInfo } from "../../types/typeOpenFoodBasicInfo";
 import { getBasicProductInfo } from "../../utils/openFoodApis";
+import PantryProductStatsConsumpionList from "../../components/Pantry__Product__Stats__Consumpion__List/PantryProductStatsConsumpionList";
 const PantryDetailsPage: React.FC = () => {
   //VARIABLES ------------------------
   const { l } = useContextLanguage();
@@ -121,6 +122,11 @@ const PantryDetailsPage: React.FC = () => {
               <PantryProductManageQuantity
                 loaded={loaded}
                 pantryProductUID={pantryProduct?.uid ?? ""}
+              />
+              <PantryProductStatsConsumpionList
+                loaded={loaded}
+                pantryProductUID={pantryProduct?.uid ?? ""}
+                openFoodProductID={pantryProduct?.openFoodProductID ?? ""}
               />
             </div>
           </IonSegmentContent>
