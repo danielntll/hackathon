@@ -102,7 +102,6 @@ export const ContextPantryProvider = ({
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return 2.56;
   }
-
   async function addPantryProductPriceRecord(
     productID: string,
     price: number,

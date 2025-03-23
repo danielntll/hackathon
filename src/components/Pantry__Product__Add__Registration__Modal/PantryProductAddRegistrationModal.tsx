@@ -1,8 +1,13 @@
 import {
+  IonAccordion,
+  IonAccordionGroup,
   IonButton,
+  IonDatetime,
   IonIcon,
+  IonItem,
   IonLabel,
   IonList,
+  IonNote,
   IonSpinner,
 } from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
@@ -18,6 +23,7 @@ import PantryProductPricePerItemInput from "../Pantry__Product__PricePerItem__In
 import { add, cashOutline } from "ionicons/icons";
 import PantryProductStatsLastPriceItem from "../Pantry__Product__Stats__LastPrice__Item/PantryProductStatsLastPriceItem";
 import { useContextPantry } from "../../context/contextPantry";
+import { formatDate } from "date-fns";
 interface ContainerProps {
   quantityUnitInfo?: typeOpenFoodQuantityUnitInfo;
   loaded: boolean;
@@ -39,6 +45,9 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
   const [uploading, setUploading] = useState<boolean>(false);
   const [priceRecordUploading, setPriceRecordUploading] =
     useState<boolean>(false);
+  const [expirationDate, setExpirationDate] = useState<string | undefined>(
+    undefined
+  );
   //USE EFFECTS ----------------------
   useEffect(() => {
     if (props.quantityUnitInfo) {
@@ -106,7 +115,29 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
       </div>
 
       <div>
-        <IonList inset></IonList>
+        <IonList inset>
+          <IonAccordionGroup value="start">
+            <IonAccordion value="start">
+              <IonItem slot="header">
+                <IonLabel>{text[l].expirationDate}</IonLabel>
+                <IonNote slot="end" id="start-date">
+                  {expirationDate}
+                </IonNote>
+              </IonItem>
+              <IonDatetime
+                id="start-date"
+                slot="content"
+                presentation="date"
+                value={expirationDate}
+                onIonChange={(e) =>
+                  setExpirationDate(e.detail.value?.toString() || "")
+                }
+                min={new Date().toISOString()}
+                locale={l === "it_IT" ? "it-IT" : "en-GB"}
+              ></IonDatetime>
+            </IonAccordion>
+          </IonAccordionGroup>
+        </IonList>
       </div>
 
       <div className="ion-padding">
@@ -123,16 +154,16 @@ const PantryProductAddRegistrationModal: React.FC<ContainerProps> = (props) => {
             <IonIcon className="ion-margin-start-icon" icon={add} />
           )}
         </IonButton>
+
         <IonButton
           disabled={priceRecordUploading || !pricePerItem || pricePerItem === 0}
           onClick={addPriceRecord}
           expand="block"
           fill="clear"
-          color="success"
         >
           <IonLabel>{text[l].addPriceRecord}</IonLabel>
           {priceRecordUploading ? (
-            <IonSpinner color={"success"} className="ion-margin-start-icon" />
+            <IonSpinner className="ion-margin-start-icon" />
           ) : (
             <IonIcon className="ion-margin-start-icon" icon={cashOutline} />
           )}
