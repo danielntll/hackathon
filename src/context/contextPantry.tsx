@@ -3,6 +3,7 @@ import { typePantryProduct } from "../types/typePantryProduct";
 import { mockPantryItemExpiring } from "../mock/mockPantryItemExpiring";
 import { typeEvent__PantryProduct__Consumption } from "../types/typeEvent__PantryProduct__Consumption";
 import { typeEvent__PantryProduct__Delete } from "../types/typeEvent__PantryProduct__Delete";
+import { typePantryProductInputsRequired } from "../types/type__Pantry__Product__Inputs__Required";
 type typeContextPantry = {
   pantryProducts: typePantryProduct[];
   updatePantryProductQuantity: (uid: string, quantity: number) => void;
@@ -26,14 +27,7 @@ type typeContextPantry = {
     date: string,
     supermarket?: string
   ) => Promise<void>;
-  addPantryProduct: (
-    productID: string,
-    itemCount: number,
-    quantity: number | undefined,
-    unit: string,
-    pricePerItem: number | undefined,
-    date: string | undefined
-  ) => Promise<void>;
+  addPantryProduct: (inputs: typePantryProductInputsRequired) => Promise<void>;
 };
 
 const ContextPantry = createContext<typeContextPantry>({
@@ -112,16 +106,9 @@ export const ContextPantryProvider = ({
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(productID, price, date, supermarket);
   }
-  async function addPantryProduct(
-    productID: string,
-    itemCount: number,
-    quantity: number | undefined,
-    unit: string,
-    pricePerItem: number | undefined,
-    date: string | undefined
-  ) {
+  async function addPantryProduct(inputs: typePantryProductInputsRequired) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log(productID, itemCount, quantity, unit, pricePerItem, date);
+    console.log(inputs);
   }
   // Return ---------------------------
   return (

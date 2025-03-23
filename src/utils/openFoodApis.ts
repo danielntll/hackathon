@@ -1,4 +1,5 @@
 import { enumPantryUnit } from "../enums/enumPantryUnit";
+import { typeOpenFoodNutriScore } from "../types/type__OpenFood__NutriScore";
 import {
   typeOpenFoodBasicInfo,
   typeOpenFoodQuantityUnitInfo,
@@ -61,6 +62,21 @@ export const getProductQuantityUnitInfo = async (
     };
 
     return quantityUnitInfo;
+  } catch (error) {
+    console.error("Error fetching data from OpenFoodFacts:", error);
+    throw error;
+  }
+};
+
+export const getProductNutriScore = async (
+  id: string
+): Promise<typeOpenFoodNutriScore> => {
+  const baseUrl = import.meta.env.VITE_OPENFOODFACTS_API_URL;
+  const productNutriScoreApiUrl = `${baseUrl}/product/${id}?product_type=all&fields=nutriscore_data`;
+  try {
+    const response = await fetch(productNutriScoreApiUrl);
+    const data = await response.json();
+    return {};
   } catch (error) {
     console.error("Error fetching data from OpenFoodFacts:", error);
     throw error;

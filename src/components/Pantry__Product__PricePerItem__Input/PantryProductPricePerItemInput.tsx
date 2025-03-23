@@ -1,4 +1,4 @@
-import { IonItem, IonInput } from "@ionic/react";
+import { IonItem, IonInput, IonText } from "@ionic/react";
 import { useContextLanguage } from "../../context/contextLanguage";
 import "./PantryProductPricePerItemInput.module.css";
 import { text } from "./text";
@@ -18,14 +18,18 @@ const PantryProductPricePerItemInput: React.FC<ContainerProps> = (props) => {
   return (
     <IonItem>
       <IonInput
-        label={text[l].pricePerItem}
         labelPlacement="stacked"
         clearInput
         type="number"
-        placeholder="Inserisci il prezzo"
+        placeholder={text[l].placeholder}
         value={props.pricePerItem?.toString() ?? undefined}
         onIonInput={(e) => props.setPricePerItem(Number(e.detail.value))}
-      />
+      >
+        <div slot="label">
+          {text[l].pricePerItem}{" "}
+          <IonText color="danger">({text[l].required})</IonText>
+        </div>
+      </IonInput>
     </IonItem>
   );
 };

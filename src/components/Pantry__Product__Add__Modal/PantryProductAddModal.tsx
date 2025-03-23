@@ -25,6 +25,7 @@ import {
   typeOpenFoodQuantityUnitInfo,
 } from "../../types/typeOpenFoodBasicInfo";
 import PantryProductAddRegistrationModal from "../Pantry__Product__Add__Registration__Modal/PantryProductAddRegistrationModal";
+import PantryProductDescriptionModal from "../Pantry__Product__Description__Modal/PantryProductDescriptionModal";
 interface ContainerProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -114,7 +115,9 @@ const PantryProductAddModal: React.FC<ContainerProps> = (props) => {
               scannedID={props.scannedID}
             />
           </IonSegmentContent>
-          <IonSegmentContent id="second">Second</IonSegmentContent>
+          <IonSegmentContent id="second">
+            <PantryProductDescriptionModal scannedID={props.scannedID} />
+          </IonSegmentContent>
         </IonSegmentView>
       </IonContent>
     </IonModal>
